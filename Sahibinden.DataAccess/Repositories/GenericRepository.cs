@@ -37,6 +37,7 @@ namespace Sahibinden.DataAccess.Repositories
 
         public Task<IEnumerable<T>> GetAllAsync()
         {
+            Console.WriteLine("Get");
             throw new NotImplementedException();
         }
 
