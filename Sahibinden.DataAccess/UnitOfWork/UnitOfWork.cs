@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sahibinden.DataAccess.UnitOfWork
 {
-    internal class UnitOfWork
+    public class UnitOfWork
     {
     }
 }
