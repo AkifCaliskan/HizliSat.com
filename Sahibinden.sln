@@ -5,13 +5,13 @@ VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sahibinden", "Sahibinden\Sahibinden.csproj", "{AF0A2982-ED86-4A11-9CCE-1A93EC586612}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sahibinden.DataAccess", "Sahibinden.DataAccess\Sahibinden.DataAccess.csproj", "{C68D88D6-6B52-4985-B66F-037E1D0ACCAA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sahibinden.DataAccess", "Sahibinden.DataAccess\Sahibinden.DataAccess.csproj", "{C68D88D6-6B52-4985-B66F-037E1D0ACCAA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sahibinden.Entities", "Sahibinden.Entities\Sahibinden.Entities.csproj", "{BADCA49F-4E14-410B-9547-2AC1D90DC3BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sahibinden.Entities", "Sahibinden.Entities\Sahibinden.Entities.csproj", "{BADCA49F-4E14-410B-9547-2AC1D90DC3BB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sahibinden.Business", "Sahibinden.Business\Sahibinden.Business.csproj", "{27F7EE98-0CA7-4492-85BA-5FC3A1FDC43B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sahibinden.Business", "Sahibinden.Business\Sahibinden.Business.csproj", "{27F7EE98-0CA7-4492-85BA-5FC3A1FDC43B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sahibinden.Core", "Sahibinden.Core\Sahibinden.Core.csproj", "{D4EC70F6-DD7B-42AC-A5AB-EB7DA5D7FDBE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sahibinden.Core", "Sahibinden.Core\Sahibinden.Core.csproj", "{D4EC70F6-DD7B-42AC-A5AB-EB7DA5D7FDBE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SahibindenUi", "SahibindenUi\SahibindenUi.csproj", "{DB4AAD73-13AD-4429-90FE-340A9AEEB1C1}"
 EndProject

@@ -1,0 +1,45 @@
+﻿@page
+@model SahibindenUi.Pages.Login.IndexModel
+@{
+    ViewData["Title"] = "Giriş Yap";
+}
+<h2>@ViewData["Title"]</h2>
+
+<form id="loginForm">
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <button type="submit" class="btn btn-primary">Giriş Yap</button>
+</form>
+
+
+<script>
+    $(document).ready(function () {
+        $("#loginForm").on("submit", function (e) {
+            e.preventDefault();
+
+            var email = $("#email").val();
+            var password = $("#password").val();
+                $.ajax({
+                url: "/api/login",  // API URL'si
+                method: "POST",     // POST isteği gönderiyoruz
+                contentType: "application/json",  // İçerik türünü JSON olarak ayarlıyoruz
+                data: JSON.stringify({
+                    email: email,
+                    password: password
+                }),
+                success: function (response) {
+                    // API'den başarılı yanıt alırsak
+                    if (response.success) {
+                        window.location.href = "/home";  // Başarılıysa yönlendir
+                    } else {
+                        alert("Giriş yapılamadı: " + response.message);  // Hata mesajı
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // Hata mesajını göster
+                    alert("Bir hata oluştu: " + error);
+                }
+            });
+        });
+    });
+</script>
