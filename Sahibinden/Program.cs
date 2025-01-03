@@ -92,11 +92,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sahibinden"));
-    app.UseStaticFiles(new StaticFileOptions
-    {
-        FileProvider = new PhysicalFileProvider("C:\\Users\\25ahm\\OneDrive\\Masaüstü\\Resimler\\"),
-        //RequestPath = "/images"
-    });
+    
 }
 
 app.UseHttpsRedirection();
