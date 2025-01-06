@@ -1,5 +1,6 @@
 ﻿using Sahibinden.Business.Abstract;
 using Sahibinden.Core.EntityFramework;
+using Sahibinden.DataAccess;
 using Sahibinden.DataAccess.Abstract;
 using Sahibinden.Entities.Concrete;
 using System;
