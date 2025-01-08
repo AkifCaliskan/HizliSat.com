@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sahibinden.Business", "Sahi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sahibinden.Core", "Sahibinden.Core\Sahibinden.Core.csproj", "{D4EC70F6-DD7B-42AC-A5AB-EB7DA5D7FDBE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SahibindenUi", "SahibindenUi\SahibindenUi.csproj", "{DB4AAD73-13AD-4429-90FE-340A9AEEB1C1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sahibinden.AdminPanel", "Sahibinden.AdminPanel\Sahibinden.AdminPanel.csproj", "{D5E482FC-6606-4F0B-9934-732E4B62B44F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +41,10 @@ Global
 		{D4EC70F6-DD7B-42AC-A5AB-EB7DA5D7FDBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4EC70F6-DD7B-42AC-A5AB-EB7DA5D7FDBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4EC70F6-DD7B-42AC-A5AB-EB7DA5D7FDBE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DB4AAD73-13AD-4429-90FE-340A9AEEB1C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DB4AAD73-13AD-4429-90FE-340A9AEEB1C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DB4AAD73-13AD-4429-90FE-340A9AEEB1C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DB4AAD73-13AD-4429-90FE-340A9AEEB1C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5E482FC-6606-4F0B-9934-732E4B62B44F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5E482FC-6606-4F0B-9934-732E4B62B44F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5E482FC-6606-4F0B-9934-732E4B62B44F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5E482FC-6606-4F0B-9934-732E4B62B44F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

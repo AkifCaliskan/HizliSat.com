@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="ApiManagers\" />
+    <ProjectReference Include="..\Sahibinden.Business\Sahibinden.Business.csproj" />
   </ItemGroup>
 
 </Project>

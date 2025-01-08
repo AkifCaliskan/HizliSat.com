@@ -1,0 +1,41 @@
+﻿@model SahibindenUi.Pages.Shared._LoginSignupFormModel
+
+<form id="loginForm">
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" id="email" class="form-control" placeholder="Email" required />
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Şifre</label>
+        <input type="password" id="password" class="form-control" placeholder="Şifre" required />
+    </div>
+
+    @if (!Model.IsLogin)
+    {
+        <div class="mb-3">
+            <label for="phone" class="form-label">Telefon Numarası</label>
+            <input type="tel" id="phone" class="form-control" placeholder="Telefon Numarası" required />
+        </div>
+        <div class="mb-3">
+            <label for="name" class="form-label">Ad</label>
+            <input type="text" id="name" class="form-control" placeholder="Ad" required />
+        </div>
+        <div class="mb-3">
+            <label for="surname" class="form-label">Soyad</label>
+            <input type="text" id="surname" class="form-control" placeholder="Soyad" required />
+        </div>
+    }
+
+    <div class="d-grid">
+        <button type="submit" class="btn btn-primary">
+            @if (Model.IsLogin)
+            {
+                <text>Giriş Yap</text>
+            }
+            else
+            {
+                <text>Kayıt Ol</text>
+            }
+        </button>
+    </div>
+</form>
