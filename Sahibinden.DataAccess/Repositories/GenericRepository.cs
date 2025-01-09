@@ -23,16 +23,12 @@ namespace Sahibinden.DataAccess.Repositories
         public async Task AddAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
-
+            await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public void DeleteAsync(T entity)
         {
-            var item = await _dbSet.FindAsync(id);
-            if (item != null)
-            {
-                _dbSet.Remove(item);
-            }
+            _dbSet.Remove(entity);
         }
 
         public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
@@ -50,10 +46,15 @@ namespace Sahibinden.DataAccess.Repositories
             return await _dbSet.FindAsync(id);
         }
 
-        public Task UpdateAsync(T entity)
+        public IQueryable<T> Query()
         {
-            _context.Entry(entity).State = EntityState.Modified;
-            return Task.CompletedTask;
+            return _dbSet.AsQueryable();
         }
+
+        public void UpdateAsync(T entity)
+        {
+            _dbSet.Update(entity);
+        }
+
     }
 }

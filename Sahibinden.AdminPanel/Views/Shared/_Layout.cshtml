@@ -3,47 +3,100 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Sahibinden.AdminPanel</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <title>@ViewData["Title"] - Admin Panel</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Sahibinden.AdminPanel.styles.css" asp-append-version="true" />
+    <style>
+        /* Genel Stil */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            min-height: 100vh;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+        }
+
+            .sidebar h4 {
+                text-align: center;
+                padding: 1rem 0;
+                border-bottom: 1px solid #495057;
+            }
+
+            .sidebar ul {
+                padding: 0;
+                list-style: none;
+            }
+
+                .sidebar ul li {
+                    margin: 0;
+                }
+
+                    .sidebar ul li a {
+                        display: block;
+                        padding: 10px 20px;
+                        color: white;
+                        text-decoration: none;
+                        transition: background-color 0.3s ease, transform 0.3s ease;
+                    }
+
+                        .sidebar ul li a:hover {
+                            background-color: #495057;
+                            transform: scale(1.05);
+                        }
+
+        /* Main Content */
+        .content {
+            margin-left: 250px; /* Sidebar genişliği kadar boşluk bırak */
+            padding: 20px;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #6c757d;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Sahibinden.AdminPanel</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h4>Admin Panel</h4>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a href="/Dashboard/Index" class="nav-link">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/Users/Index" class="nav-link">Kullanıcı Yönetimi</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/Adverts/Index" class="nav-link">İlan Yönetimi</a>
+                </li>
+                <!-- Diğer menü öğeleri -->
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
             @RenderBody()
-        </main>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - Sahibinden.AdminPanel - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
+    <footer>
+        &copy; 2024 - Admin Panel - Tüm Hakları Saklıdır
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>
