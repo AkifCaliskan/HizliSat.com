@@ -1,6 +1,8 @@
-﻿using Sahibinden.Business.Abstract;
+﻿using AutoMapper;
+using Sahibinden.Business.Abstract;
+using Sahibinden.Business.Model.User;
 using Sahibinden.Core.EntityFramework;
-using Sahibinden.DataAccess.Abstract;
+using Sahibinden.DataAccess.UnitOfWork;
 using Sahibinden.Entities.Concrete;
 using System;
 using System.Collections.Generic;
@@ -13,55 +15,41 @@ namespace Sahibinden.Business.Concrete.Services
 {
     public class UserService : IUserService
     {
-        private IUserDal _userDal;
-        private IQueryableRepository<User> _queryableRepository;
-        public UserService(IUserDal userDal, IQueryableRepository<User> queryableRepository)
+        private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public UserService(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _userDal = userDal;
-            _queryableRepository = queryableRepository;
+            _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
-        public User Add(User authorizedDomain)
+
+        public async Task Delete(int id)
         {
-            return _userDal.Add(authorizedDomain);
+            var repository = _unitOfWork.GetRepository<User>();
+            var deleteditem = await repository.GetByIdAsync(id);
+            if (deleteditem == null)
+            {
+                throw new Exception("Hata");
+            }
+            repository.DeleteAsync(deleteditem);
+            await _unitOfWork.SaveChangesAsync();
+
+
+
         }
 
-        public User GetById(int id)
+        public async Task<User> GetById(int id)
         {
-            return _userDal.Get(x=>x.Id == id);
-          
+            var repository = _unitOfWork.GetRepository<User>();
+            return await repository.GetByIdAsync(id);
         }
 
-        public IQueryable<User> GetQueryable(bool status)
+        public async Task<IEnumerable<User>> List(UserListModel userListModel)
         {
-            return _queryableRepository.Table.Where(x => x.Status == status);
-        }
-
-        public IQueryable<User> GetQueryable(Expression<Func<User, bool>> filter = null)
-        {
-            return filter == null ? _queryableRepository.Table : _queryableRepository.Table.Where(filter);
-        }
-
-        public IQueryable<User> GetQueryableSearch()
-        {
-            return _queryableRepository.Table;
-        }
-
-        public List<User> GetUsersAll()
-        {
-            return _userDal.GetList();
-        }
-
-        public User Update(User user)
-        {
-            return _userDal.Update(user);
-        }
-
-        public void UpdateDeleteColumn(int id)
-        {
-            var deletedItem = GetById(id);
-            Update(deletedItem);
-
+            var repository = _unitOfWork.GetRepository<User>();
+            return await repository.GetAllAsync();
         }
     }
 }

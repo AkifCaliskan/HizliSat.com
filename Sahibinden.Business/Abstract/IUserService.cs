@@ -1,4 +1,6 @@
-﻿using Sahibinden.Entities.Concrete;
+﻿using Sahibinden.Business.Model.User;
+using Sahibinden.Entities.Concrete;
+using Sahibinden.Model.Category;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +12,10 @@ namespace Sahibinden.Business.Abstract
 {
     public interface IUserService
     {
-        List<User> GetUsersAll();
-        IQueryable<User> GetQueryable(bool status);
-        IQueryable<User> GetQueryable(Expression<Func<User, bool>> filter = null);
-        IQueryable<User> GetQueryableSearch();
-        User GetById(int id);
-        User Add(User user);
-        User Update(User user);
-        void UpdateDeleteColumn(int id);
+
+        Task<IEnumerable<User>> List(UserListModel userListModel);
+        Task<User> GetById(int id);
+        Task Delete(int id);
 
     }
 }

@@ -1,8 +1,15 @@
-﻿using Sahibinden.Business.Abstract;
+﻿using AutoMapper;
+using Sahibinden.Business.Abstract;
+using Sahibinden.Business.Model.Advert;
 using Sahibinden.Core.EntityFramework;
 using Sahibinden.DataAccess;
-using Sahibinden.DataAccess.Abstract;
+using Sahibinden.DataAccess.Repositories;
+using Sahibinden.DataAccess.UnitOfWork;
 using Sahibinden.Entities.Concrete;
+using Sahibinden.Model.Advert;
+using Sahibinden.Model.AdvertDetail;
+using Sahibinden.Model.Category;
+using Sahibinden.Model.Image;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,59 +21,65 @@ namespace Sahibinden.Business.Concrete.Services
 {
     public class AdvertService : IAdvertService
     {
-        private IAdvertDal _advertDal;
-        private IQueryableRepository<Advert> _queryableRepository;
-        public AdvertService(IAdvertDal advertDal, IQueryableRepository<Advert> queryableRepository)
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+
+        public AdvertService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _advertDal = advertDal;
-            _queryableRepository = queryableRepository;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        public Advert Add(Advert authorizedDomain)
+        public async Task<Advert> Add(AdvertAddModel advertAddModel)
         {
-            return _advertDal.Add(authorizedDomain);
+            var advert = _mapper.Map<Advert>(advertAddModel);
+            await _unitOfWork.GetRepository<Advert>().AddAsync(advert);
+            await _unitOfWork.SaveChangesAsync();
+            return advert;
         }
 
-        public List<Advert> GetAll()
+        public async Task Delete(int id)
         {
-            return _advertDal.GetList();
+            var repository = _unitOfWork.GetRepository<Advert>();
+            var entity = await repository.GetByIdAsync(id);
+            if (entity == null)
+            {
+                throw new Exception("Advert Not Deleted");
+            }
+            repository.DeleteAsync(entity);
+            await _unitOfWork.SaveChangesAsync();
         }
 
-        public Advert GetById(int id)
+        public async Task<Advert> GetById(int id)
         {
-            return _advertDal.Get(x => x.Id == id);
+            var repositories = _unitOfWork.GetRepository<Advert>();
+            var entity = await repositories.GetByIdAsync(id);
+            if (entity == null)
+            {
+                throw new Exception("Hata");
+            }
+            return entity;
         }
 
-        public IQueryable<Advert> GetQueryable(bool status)
+        public async Task<IEnumerable<Advert>> List(AdvertListModel advertListModel)
         {
-            return _queryableRepository.Table.Where(x => x.Status == status);
+            var adverts = await _unitOfWork.GetRepository<Advert>().GetAllAsync();
+            return adverts;
         }
 
-        public IQueryable<Advert> GetQueryable(Expression<Func<Advert, bool>> filter = null)
+        public async Task<Advert> Update(AdvertEditModel advertEditModel)
         {
-            return filter == null ? _queryableRepository.Table : _queryableRepository.Table.Where(filter);
-        }
+            var repository = _unitOfWork.GetRepository<Advert>();
+            var updatedItem = await repository.GetByIdAsync(advertEditModel.Id);
+            if (updatedItem == null)
+            {
+                throw new Exception("Hata");
+            }
+            _mapper.Map<Advert>(advertEditModel);
+            repository.UpdateAsync(updatedItem);
+            await _unitOfWork.SaveChangesAsync();
+            return updatedItem;
 
-        public IQueryable<Advert> GetQueryableSearch()
-        {
-            return _queryableRepository.Table;
         }
-
-        public Advert Update(Advert advert)
-        {
-            return _advertDal.Update(advert);
-        }
-
-        public void UpdateDeleteColumn(int id)
-        {
-            var deletedItem = GetById(id);
-            Update(deletedItem);
-        }
-
-        public void DeleteColumn(Advert advert)
-        {
-            _advertDal.Delete(advert);
-        }
-
     }
 }

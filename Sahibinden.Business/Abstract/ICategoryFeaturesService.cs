@@ -11,14 +11,11 @@ namespace Sahibinden.Business.Abstract
     public interface ICategoryFeaturesService
     {
 
-        List<CategoryFeature> GetAll();
-        CategoryFeature Add(CategoryFeature categoryFeature);
-        CategoryFeature Update(CategoryFeature categoryFeature);
-        CategoryFeature GetById(int id);
-        void UpdateDeleteColumn(int id);
-        void DeleteColumn(CategoryFeature categoryFeature);
-        IQueryable<CategoryFeature> GetQueryable(bool status);
-        IQueryable<CategoryFeature> GetQueryable(Expression<Func<CategoryFeature, bool>> filter = null);
-        IQueryable<CategoryFeature> GetQueryableSearch();
+        Task<IEnumerable<CategoryFeature>> List(CategoryFeature categoryFeature);
+        Task<CategoryFeature> Add(CategoryFeature categoryFeature);
+        bool Update(CategoryFeature categoryFeature);
+        Task<CategoryFeature> GetById(int id);
+        void Delete(int id);
+
     }
 }

@@ -25,12 +25,7 @@ namespace Sahibinden.Business.DependecyResolvers.AutoFac
             builder.RegisterType<ImageService>().As<IImageService>();
             builder.RegisterType<CategoryFeatureService>().As<ICategoryFeaturesService>();
 
-            builder.RegisterType<EfAdvertDal>().As<IAdvertDal>();
-            builder.RegisterType<EfAdvertDetailDal>().As<IAdvertDetailDal>();
-            builder.RegisterType<EfCategoryDal>().As<ICategoryDal>();
-            builder.RegisterType<EfUserDal>().As<IUserDal>();
-            builder.RegisterType<EfCategoryFeaturesDal>().As<ICategoryFeaturesDal>();
-            builder.RegisterType<EfImageDal>().As<IImagesDal>();
+  
 
 
         }

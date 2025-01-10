@@ -1,6 +1,7 @@
-﻿using Sahibinden.Business.Abstract;
+﻿using AutoMapper;
+using Sahibinden.Business.Abstract;
 using Sahibinden.Core.EntityFramework;
-using Sahibinden.DataAccess.Abstract;
+using Sahibinden.DataAccess.UnitOfWork;
 using Sahibinden.Entities.Concrete;
 using System;
 using System.Collections.Generic;
@@ -13,58 +14,64 @@ namespace Sahibinden.Business.Concrete.Services
 {
     public class CategoryFeatureService : ICategoryFeaturesService
     {
-        private ICategoryFeaturesDal _categoryFeaturesDal;
-        private IQueryableRepository<CategoryFeature> _queryableRepository;
-        public CategoryFeatureService(ICategoryFeaturesDal categoryFeaturesDal, IQueryableRepository<CategoryFeature> queryableRepository)
+        private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public CategoryFeatureService(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _categoryFeaturesDal = categoryFeaturesDal;
-            _queryableRepository = queryableRepository;
+            _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
-        public CategoryFeature Add(CategoryFeature authorizedDomain)
+        public async Task<CategoryFeature> Add(CategoryFeature categoryFeature)
         {
-          return _categoryFeaturesDal.Add(authorizedDomain);
+            var category = _mapper.Map<CategoryFeature>(categoryFeature);
+            await _unitOfWork.GetRepository<CategoryFeature>().AddAsync(category);
+            await _unitOfWork.SaveChangesAsync();
+            return category;
         }
 
-        public void DeleteColumn(CategoryFeature categoryFeature)
+        public async void Delete(int id)
         {
-           _categoryFeaturesDal.Delete(categoryFeature);
+            var repository = _unitOfWork.GetRepository<CategoryFeature>();
+            var deletedItem = await repository.GetByIdAsync(id);
+            if (deletedItem == null)
+            {
+                throw new Exception("Hata");
+
+            }
+            repository.DeleteAsync(deletedItem);
+            await _unitOfWork.SaveChangesAsync();
         }
 
-        public List<CategoryFeature> GetAll()
+        public Task<CategoryFeature> GetById(int id)
         {
-            return _categoryFeaturesDal.GetList();
+            var repository = _unitOfWork.GetRepository<CategoryFeature>();
+            var entity = repository.GetByIdAsync(id);
+            return entity;
         }
 
-        public CategoryFeature GetById(int id)
+        public async Task<IEnumerable<CategoryFeature>> List(CategoryFeature categoryFeature)
         {
-           return _categoryFeaturesDal.Get(x=> x.Id == id);
+            var repository = _unitOfWork.GetRepository<CategoryFeature>();
+            return await repository.GetAllAsync();
         }
 
-        public IQueryable<CategoryFeature> GetQueryable(bool status)
+        public bool Update(CategoryFeature categoryFeature)
         {
-            return _queryableRepository.Table.Where(x=>x.Status == status); 
+            var repository = _unitOfWork.GetRepository<CategoryFeature>();
+            repository.GetByIdAsync(categoryFeature.Id);
+            if (categoryFeature.Id == null)
+            {
+                throw new Exception("Hata");
+            }
+            repository.UpdateAsync(categoryFeature);
+            _unitOfWork.SaveChangesAsync();
+            return true;
+
         }
 
-        public IQueryable<CategoryFeature> GetQueryable(Expression<Func<CategoryFeature, bool>> filter = null)
-        {
-            return filter == null ? _queryableRepository.Table : _queryableRepository.Table.Where(filter);
-        }
-
-        public IQueryable<CategoryFeature> GetQueryableSearch()
-        {
-            return _queryableRepository.Table;
-        }
-
-        public CategoryFeature Update(CategoryFeature categoryFeature)
-        {
-            return _categoryFeaturesDal.Update(categoryFeature);
-        }
-
-        public void UpdateDeleteColumn(int id)
-        {
-            var deletedItem = GetById(id);
-            Update(deletedItem);
-        }
     }
+
+
 }

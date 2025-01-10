@@ -1,7 +1,9 @@
-﻿using Sahibinden.Business.Abstract;
+﻿using AutoMapper;
+using Sahibinden.Business.Abstract;
 using Sahibinden.Core.EntityFramework;
-using Sahibinden.DataAccess.Abstract;
+using Sahibinden.DataAccess.UnitOfWork;
 using Sahibinden.Entities.Concrete;
+using Sahibinden.Model.AdvertDetail;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,57 +15,63 @@ namespace Sahibinden.Business.Concrete.Services
 {
     public class AdvertDetailService : IAdvertDetailService
     {
-        private IAdvertDetailDal _advertDetail;
-        private IQueryableRepository<AdvertDetail> _queryableRepository;
-        public AdvertDetailService(IAdvertDetailDal advertDetailDal, IQueryableRepository<AdvertDetail> queryableRepository)
+        private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public AdvertDetailService(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _advertDetail = advertDetailDal;
-            _queryableRepository = queryableRepository;
-        }
-        public AdvertDetail Add(AdvertDetail authorizedDomain)
-        {
-            return _advertDetail.Add(authorizedDomain);
+            _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
-        public void DeleteColumn(AdvertDetail advertDetail)
+        public async Task<AdvertDetail> Add(AdvertDetail advertDetail)
         {
-            _advertDetail.Delete(advertDetail);
+            var advert = _mapper.Map<AdvertDetail>(advertDetail);
+            await _unitOfWork.GetRepository<AdvertDetail>().AddAsync(advert);
+            await _unitOfWork.SaveChangesAsync();
+            return advert;
         }
 
-        public List<AdvertDetail> GetAll()
+        public async Task Delete(int id)
         {
-            return _advertDetail.GetList();
+            var repository = _unitOfWork.GetRepository<AdvertDetail>();
+            var deletedItem = await repository.GetByIdAsync(id);
+            if (deletedItem == null)
+            {
+                throw new Exception("Hata");
+            }
+            repository.DeleteAsync(deletedItem);
+            await _unitOfWork.SaveChangesAsync();
         }
 
-        public AdvertDetail GetById(int id)
+        public async Task<AdvertDetail> GetById(int id)
         {
-            return _advertDetail.Get(x => x.Id == id);
+            var repository = _unitOfWork.GetRepository<AdvertDetail>();
+            var entity = await repository.GetByIdAsync(id);
+            if (entity == null)
+            {
+                throw new Exception("Hata");
+            }
+            return entity;
         }
 
-        public IQueryable<AdvertDetail> GetQueryable(bool status)
+        public async Task<IEnumerable<AdvertDetail>> List(AdvertDetailListModel advertDetailListModel)
         {
-            return _queryableRepository.Table.Where(x => x.Status == status);
+            var advertdetails = await _unitOfWork.GetRepository<AdvertDetail>().GetAllAsync();
+            return advertdetails;
         }
 
-        public IQueryable<AdvertDetail> GetQueryable(Expression<Func<AdvertDetail, bool>> filter = null)
+        public async Task<AdvertDetail> Update(AdvertDetailEditModel advertDetailEditModel)
         {
-            return filter == null ? _queryableRepository.Table : _queryableRepository.Table.Where(filter);
-        }
-
-        public IQueryable<AdvertDetail> GetQueryableSearch()
-        {
-            return _queryableRepository.Table;
-        }
-
-        public AdvertDetail Update(AdvertDetail advertdetail)
-        {
-            return _advertDetail.Update(advertdetail);
-        }
-
-        public void UpdateDeleteColumn(int id)
-        {
-            var deletedItem = GetById(id);
-            Update(deletedItem);
+            var repository = _unitOfWork.GetRepository<AdvertDetail>();
+            var updatedItem = await repository.GetByIdAsync(advertDetailEditModel.AdvertId);
+            if (updatedItem == null)
+            {
+                throw new Exception("Hata");
+            }
+            repository.UpdateAsync(updatedItem);
+            await _unitOfWork.SaveChangesAsync();
+            return updatedItem;
         }
     }
 }

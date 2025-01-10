@@ -18,7 +18,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddScoped(typeof(IQueryableRepository<>), typeof(EfQueryableRepository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<DbContext, Context>();
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());

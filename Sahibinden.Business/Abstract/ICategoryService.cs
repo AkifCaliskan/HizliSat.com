@@ -1,4 +1,5 @@
 ﻿using Sahibinden.Entities.Concrete;
+using Sahibinden.Model.Category;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +11,11 @@ namespace Sahibinden.Business.Abstract
 {
     public interface ICategoryService
     {
-        List<Category> GetAll();
-        Category Add(Category category);
-        Category Update(Category category);
-        Category GetById(int id);
-        public void UpdateDeleteColumn(int id);
-        IQueryable<Category> GetQueryable(bool status);
-        IQueryable<Category> GetQueryable(Expression<Func<Category, bool>> filter = null);
-        IQueryable<Category> GetQueryableSearch();
-        void DeleteColumn(Category category);
+        Task<IEnumerable<Category>> List(CategoryListModel categoryListModel);
+        Task<Category> Add(CategoryAddModel categoryAddModel);
+        Task<Category> Update(CategoryEditModel categoryEditModel);
+        Task<Category> GetById(int id);
+
+        Task Delete(int id);
     }
 }
