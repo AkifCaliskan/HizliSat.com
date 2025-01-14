@@ -1,11 +1,14 @@
-﻿using Sahibinden.Business.Abstract;
+﻿using AutoMapper;
+using Sahibinden.Business.Abstract;
 using Sahibinden.Core.EntityFramework;
-using Sahibinden.DataAccess.Abstract;
+using Sahibinden.DataAccess.UnitOfWork;
 using Sahibinden.Entities.Concrete;
+using Sahibinden.Model.Category;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,57 +16,64 @@ namespace Sahibinden.Business.Concrete.Services
 {
     public class CategoryService : ICategoryService
     {
-        private ICategoryDal _categoryDal;
-        private IQueryableRepository<Category> _queryableRepository;
-        public CategoryService(ICategoryDal categoryDal, IQueryableRepository<Category> queryableRepository)
+        private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public CategoryService(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _categoryDal = categoryDal;
-            _queryableRepository = queryableRepository;
+            _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
-        public Category Add(Category authorizedDomain)
+        public async Task<Category> Add(CategoryAddModel categoryAddModel)
         {
-            return _categoryDal.Add(authorizedDomain);
+            var category = _mapper.Map<Category>(categoryAddModel);
+            await _unitOfWork.GetRepository<Category>().AddAsync(category);
+            await _unitOfWork.SaveChangesAsync();
+            return category;
         }
 
-        public List<Category> GetAll()
+        public async Task Delete(int id)
         {
-            return _categoryDal.GetList();
+            var repository = _unitOfWork.GetRepository<Category>();
+            var deletedItem = await repository.GetByIdAsync(id);
+            if (deletedItem == null)
+            {
+                throw new Exception("Hata");
+            }
+            repository.DeleteAsync(deletedItem);
+            await _unitOfWork.SaveChangesAsync();
         }
 
-        public Category GetById(int id)
+        public async Task<Category> GetById(int id)
         {
-            return _categoryDal.Get(x => x.Id == id);
+            var repository = _unitOfWork.GetRepository<Category>();
+            var entity = await repository.GetByIdAsync(id);
+            if (entity == null)
+            {
+                throw new Exception("Hata");
+            }
+            return entity;
         }
 
-        public IQueryable<Category> GetQueryable(bool status)
+        public async Task<IEnumerable<Category>> List(CategoryListModel categoryListModel)
         {
-            return _queryableRepository.Table.Where(x => x.Status == status);
+            var categories = await _unitOfWork.GetRepository<Category>().GetAllAsync();
+            return categories;
         }
 
-        public IQueryable<Category> GetQueryable(Expression<Func<Category, bool>> filter = null)
+        public async Task<Category> Update(CategoryEditModel categoryEditModel)
         {
-            return filter == null ? _queryableRepository.Table : _queryableRepository.Table.Where(filter);
-        }
-
-        public IQueryable<Category> GetQueryableSearch()
-        {
-            return _queryableRepository.Table;
-        }
-
-        public Category Update(Category category)
-        {
-            return _categoryDal.Update(category);
-        }
-
-        public void UpdateDeleteColumn(int id)
-        {
-            var deletedItem = GetById(id);
-            Update(deletedItem);
-        }
-        public void DeleteColumn(Category category)
-        {
-            _categoryDal.Delete(category);
+            var repository = _unitOfWork.GetRepository<Category>();
+            var updatedItem =await repository.GetByIdAsync(categoryEditModel.Id);
+            if (updatedItem == null)
+            {
+                throw new Exception("Hata");
+            }
+           repository.UpdateAsync(updatedItem);
+            return updatedItem;
         }
     }
 }
+
+

@@ -1,4 +1,7 @@
-﻿namespace Sahibinden.Model.AdvertDetail
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Sahibinden.Model.AdvertDetail
+
 {
     public class AdvertDetailAdd
     {

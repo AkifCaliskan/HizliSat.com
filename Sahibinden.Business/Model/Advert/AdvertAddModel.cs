@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
 using Sahibinden.Entities.Concrete;
 using Sahibinden.Model.AdvertDetail;
 using Sahibinden.Model.Category;
