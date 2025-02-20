@@ -9,6 +9,7 @@ namespace Sahibinden.DataAccess.UnitOfWork
 {
     public interface IUnitOfWork : IDisposable
     {
+
         IGenericRepository<T> GetRepository<T>() where T : class;
         Task BeginTransactionAsync();
         Task CommitTransactionAsync();

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace Sahibinden.Model.AdvertDetail
+namespace Sahibinden.Business.Model.AdvertDetail
 
 {
     public class AdvertDetailAdd

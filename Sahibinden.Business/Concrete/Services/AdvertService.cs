@@ -6,7 +6,6 @@ using Sahibinden.DataAccess;
 using Sahibinden.DataAccess.Repositories;
 using Sahibinden.DataAccess.UnitOfWork;
 using Sahibinden.Entities.Concrete;
-using Sahibinden.Model.Advert;
 using Sahibinden.Model.AdvertDetail;
 using Sahibinden.Model.Category;
 using Sahibinden.Model.Image;
@@ -33,6 +32,7 @@ namespace Sahibinden.Business.Concrete.Services
         public async Task<Advert> Add(AdvertAddModel advertAddModel)
         {
             var advert = _mapper.Map<Advert>(advertAddModel);
+            
             await _unitOfWork.GetRepository<Advert>().AddAsync(advert);
             await _unitOfWork.SaveChangesAsync();
             return advert;
@@ -44,7 +44,7 @@ namespace Sahibinden.Business.Concrete.Services
             var entity = await repository.GetByIdAsync(id);
             if (entity == null)
             {
-                throw new Exception("Advert Not Deleted");
+                ResultWrapperService<Advert>.FailureResult("İlan bulunamadı");
             }
             repository.DeleteAsync(entity);
             await _unitOfWork.SaveChangesAsync();
@@ -56,7 +56,7 @@ namespace Sahibinden.Business.Concrete.Services
             var entity = await repositories.GetByIdAsync(id);
             if (entity == null)
             {
-                throw new Exception("Hata");
+                ResultWrapperService<Advert>.FailureResult("İlan bulunamadı");
             }
             return entity;
         }
@@ -71,15 +71,15 @@ namespace Sahibinden.Business.Concrete.Services
         {
             var repository = _unitOfWork.GetRepository<Advert>();
             var updatedItem = await repository.GetByIdAsync(advertEditModel.Id);
+
             if (updatedItem == null)
             {
-                throw new Exception("Hata");
+                ResultWrapperService<Advert>.FailureResult("İlan bulunamadı");
             }
-            _mapper.Map<Advert>(advertEditModel);
+            _mapper.Map(advertEditModel, updatedItem);
             repository.UpdateAsync(updatedItem);
             await _unitOfWork.SaveChangesAsync();
             return updatedItem;
-
         }
     }
 }

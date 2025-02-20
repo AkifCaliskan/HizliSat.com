@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Sahibinden.Business.Abstract;
+using Sahibinden.Business.Model.AdvertDetail;
 using Sahibinden.Core.EntityFramework;
 using Sahibinden.DataAccess.UnitOfWork;
 using Sahibinden.Entities.Concrete;
@@ -24,9 +25,9 @@ namespace Sahibinden.Business.Concrete.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<AdvertDetail> Add(AdvertDetail advertDetail)
+        public async Task<AdvertDetail> Add(AdvertDetailAdd advertDetailAdd)
         {
-            var advert = _mapper.Map<AdvertDetail>(advertDetail);
+            var advert = _mapper.Map<AdvertDetail>(advertDetailAdd);
             await _unitOfWork.GetRepository<AdvertDetail>().AddAsync(advert);
             await _unitOfWork.SaveChangesAsync();
             return advert;
@@ -38,7 +39,7 @@ namespace Sahibinden.Business.Concrete.Services
             var deletedItem = await repository.GetByIdAsync(id);
             if (deletedItem == null)
             {
-                throw new Exception("Hata");
+                ResultWrapperService<AdvertDetail>.FailureResult("İlan Detayları bulunamadı.");
             }
             repository.DeleteAsync(deletedItem);
             await _unitOfWork.SaveChangesAsync();
@@ -50,7 +51,7 @@ namespace Sahibinden.Business.Concrete.Services
             var entity = await repository.GetByIdAsync(id);
             if (entity == null)
             {
-                throw new Exception("Hata");
+                ResultWrapperService<AdvertDetail>.FailureResult("İlan Detayları bulunamadı");
             }
             return entity;
         }
@@ -67,7 +68,7 @@ namespace Sahibinden.Business.Concrete.Services
             var updatedItem = await repository.GetByIdAsync(advertDetailEditModel.AdvertId);
             if (updatedItem == null)
             {
-                throw new Exception("Hata");
+                ResultWrapperService<AdvertDetail>.FailureResult("İlan Detayları bulunamadı");
             }
             repository.UpdateAsync(updatedItem);
             await _unitOfWork.SaveChangesAsync();

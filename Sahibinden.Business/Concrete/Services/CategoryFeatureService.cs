@@ -37,7 +37,7 @@ namespace Sahibinden.Business.Concrete.Services
             var deletedItem = await repository.GetByIdAsync(id);
             if (deletedItem == null)
             {
-                throw new Exception("Hata");
+                ResultWrapperService<CategoryFeature>.FailureResult("Kategori Özellikleri bulunamadı");
 
             }
             repository.DeleteAsync(deletedItem);
@@ -63,7 +63,7 @@ namespace Sahibinden.Business.Concrete.Services
             repository.GetByIdAsync(categoryFeature.Id);
             if (categoryFeature.Id == null)
             {
-                throw new Exception("Hata");
+                ResultWrapperService<CategoryFeature>.FailureResult("Kategori Özellikleri bulunamadı");
             }
             repository.UpdateAsync(categoryFeature);
             _unitOfWork.SaveChangesAsync();

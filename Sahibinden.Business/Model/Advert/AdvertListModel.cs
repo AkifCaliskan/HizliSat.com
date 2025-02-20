@@ -1,4 +1,4 @@
-﻿namespace Sahibinden.Model.Advert
+﻿namespace Sahibinden.Business.Model.Advert
 {
     public class AdvertListModel
     {

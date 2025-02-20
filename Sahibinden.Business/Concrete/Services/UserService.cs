@@ -1,15 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Caching.Memory;
 using Sahibinden.Business.Abstract;
 using Sahibinden.Business.Model.User;
-using Sahibinden.Core.EntityFramework;
 using Sahibinden.DataAccess.UnitOfWork;
 using Sahibinden.Entities.Concrete;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sahibinden.Business.Concrete.Services
 {
@@ -17,36 +11,56 @@ namespace Sahibinden.Business.Concrete.Services
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMemoryCache _memoryCache;
+        private readonly ICacheService _cacheService;
 
-        public UserService(IMapper mapper, IUnitOfWork unitOfWork)
+        public UserService(IMapper mapper, IUnitOfWork unitOfWork, IMemoryCache memoryCache, ICacheService cacheService)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _memoryCache = memoryCache;
+            _cacheService = cacheService;
         }
 
-
+       
         public async Task Delete(int id)
         {
             var repository = _unitOfWork.GetRepository<User>();
-            var deleteditem = await repository.GetByIdAsync(id);
-            if (deleteditem == null)
+            var deletedItem = await repository.GetByIdAsync(id);
+            if (deletedItem == null)
             {
-                throw new Exception("Hata");
+                ResultWrapperService<User>.FailureResult("Kullanıcı bulunamadı");
             }
-            repository.DeleteAsync(deleteditem);
+
+
+
+            repository.DeleteAsync(deletedItem);
             await _unitOfWork.SaveChangesAsync();
 
-
-
+            var cacheKey = $"user_{id}";
+            _memoryCache.Remove(cacheKey);
         }
 
         public async Task<User> GetById(int id)
         {
-            var repository = _unitOfWork.GetRepository<User>();
-            return await repository.GetByIdAsync(id);
-        }
+            var cacheKey = $"user_{id}";
+            var cachedUser = _memoryCache.Get<User>(cacheKey);
 
-        public async Task<IEnumerable<User>> List(UserListModel userListModel)
+            if (cachedUser != null)
+            {
+                return cachedUser;
+            }
+
+            var repository = _unitOfWork.GetRepository<User>();
+            var user = await repository.GetByIdAsync(id);
+            if (user != null)
+            {
+                _memoryCache.Set(cacheKey, user, TimeSpan.FromHours(1));
+            }
+
+            return user;
+        }
+        public async Task<IEnumerable<User>> List()
         {
             var repository = _unitOfWork.GetRepository<User>();
             return await repository.GetAllAsync();

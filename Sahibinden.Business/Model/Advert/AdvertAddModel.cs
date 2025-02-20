@@ -11,15 +11,14 @@ namespace Sahibinden.Business.Model.Advert
     public class AdvertAddModel
     {
         [JsonProperty("Name")]
-        public int Id { get; set; }
-
+        
         public string Name { get; set; }
         public bool Status { get; set; }
         public string Description { get; set; }
-        public int AdvertId { get; set; }
-        public List<IFormFile> AdvertImages { get; set; }
+        public int UserId { get; set; }
+        public  DateTime CreatedDate { get; set; }
         public int CategoryId { get; set; }
-        public string[]? AdvertImage { get; set; }
+        public int ImageId { get; set; }
       
     }
 }

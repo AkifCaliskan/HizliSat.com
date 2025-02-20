@@ -1,15 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Mvc;
 using Sahibinden.Business.Abstract;
+using Sahibinden.Business.Concrete.Services;
 using Sahibinden.Entities.Concrete;
-using Sahibinden.Model.User;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using System.Numerics;
-using System.Security.Claims;
-using System.Text;
 
 namespace Sahibinden.Controllers
 {
@@ -17,72 +9,29 @@ namespace Sahibinden.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
-        private IUserService _userService;
 
-        public UserController(IConfiguration configuration, IUserService userService)
+        public UserController(IUserService userService, IConfiguration configuration)
         {
-            _configuration = configuration;
             _userService = userService;
+            _configuration = configuration;
         }
 
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] UserLoginDetailModel userModel)
+        [HttpGet]
+        public async Task<IActionResult> Get()
         {
-           
-            var user = _userService.GetQueryable(true).FirstOrDefault(p => p.Email == userModel.Email); 
-            if (user != null)
+            try
             {
-                var token = GenerateJwtToken(userModel.Email, user.Id);
-                return Ok(new { Token = token, userId= user.Id });
+                var users = await _userService.List();
+                return Ok(users);
             }
-            else
+            catch (Exception)
             {
-                return BadRequest("Kullanıcı bulunamadı");
+
+                ResultWrapperService<User>.FailureResult("Hata");
             }
-
+            return Ok();
         }
-
-        private string GenerateJwtToken(string username, int userId)
-        {
-            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                new Claim(ClaimTypes.Name, username),
-                new Claim(ClaimTypes.Actor, userId.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddHours(8),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
-        }
-        [HttpPost]
-        [Route("NewUser")]
-        public IActionResult NewUser([FromBody] UserRegisterModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return NotFound("Kullanıcı bilgileri eksik.");
-            }
-            var newUser = _userService.Add(new User()
-            {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Email = model.Email,
-                Phone = model.Phone,
-                Address = model.Address,
-                RecordDate = DateTime.Now,
-                Password = model.Password,
-                
-            });
-            return Ok(newUser);
-        }
-
     }
-
 }

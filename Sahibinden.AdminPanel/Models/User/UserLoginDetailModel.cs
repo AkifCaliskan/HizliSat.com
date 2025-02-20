@@ -1,4 +1,4 @@
-﻿namespace Sahibinden.Model.User
+﻿namespace Sahibinden.AdminPanel.Models.User
 {
     public class UserLoginDetailModel
     {

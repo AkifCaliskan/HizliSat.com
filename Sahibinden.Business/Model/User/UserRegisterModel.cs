@@ -1,4 +1,4 @@
-﻿namespace Sahibinden.Model.User
+﻿namespace Sahibinden.Business.Model.User
 {
     public class UserRegisterModel
     {

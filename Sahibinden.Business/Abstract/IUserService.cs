@@ -1,6 +1,7 @@
 ﻿using Sahibinden.Business.Model.User;
 using Sahibinden.Entities.Concrete;
 using Sahibinden.Model.Category;
+using Sahibinden.Model.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +14,8 @@ namespace Sahibinden.Business.Abstract
     public interface IUserService
     {
 
-        Task<IEnumerable<User>> List(UserListModel userListModel);
+        Task<IEnumerable<User>> List();
         Task<User> GetById(int id);
         Task Delete(int id);
-
     }
 }

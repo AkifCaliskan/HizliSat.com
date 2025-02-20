@@ -1,6 +1,5 @@
 ﻿using Sahibinden.Business.Model.Advert;
 using Sahibinden.Entities.Concrete;
-using Sahibinden.Model.Advert;
 using System;
 using System.Collections.Generic;
 using System.Linq;

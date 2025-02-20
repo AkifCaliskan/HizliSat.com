@@ -1,4 +1,5 @@
-﻿using Sahibinden.Entities.Concrete;
+﻿using Sahibinden.Business.Model.AdvertDetail;
+using Sahibinden.Entities.Concrete;
 using Sahibinden.Model.AdvertDetail;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace Sahibinden.Business.Abstract
 {
     public interface IAdvertDetailService
     {
-        Task<AdvertDetail> Add(AdvertDetail advertDetail);
+        Task<AdvertDetail> Add(AdvertDetailAdd advertDetailAdd);
         Task<IEnumerable<AdvertDetail>> List(AdvertDetailListModel advertDetailListModel);
         Task<AdvertDetail> Update(AdvertDetailEditModel advertDetailEditModel);
         Task<AdvertDetail> GetById (int id);

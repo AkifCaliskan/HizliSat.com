@@ -88,17 +88,7 @@ namespace Sahibinden.Controllers
             return Ok(new { UploadedFiles = uploadedFiles });
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetImages()
-        {
-            IQueryable<Image> query = _imageService.GetQueryable(true);
-            var model = query.Select(x => new ImageListModel
-            {
-                AdvertId = x.AdvertId,
-                Images = x.Images
-            });
-            return Ok(model);
-        }
+        
 
     }
 }

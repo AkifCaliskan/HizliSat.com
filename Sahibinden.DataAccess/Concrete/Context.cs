@@ -37,6 +37,10 @@ namespace Sahibinden.DataAccess.Concrete
             modelBuilder.ApplyConfiguration(new CategoryMapping());
             modelBuilder.ApplyConfiguration(new ImageMapping());
             modelBuilder.ApplyConfiguration(new CategoryFeaturesMapping());
+
+            
         }
+
+        
     }
 }

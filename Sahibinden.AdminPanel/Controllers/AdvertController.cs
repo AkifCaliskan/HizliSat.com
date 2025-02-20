@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Sahibinden.Business.Abstract;
+using Sahibinden.Entities.Concrete;
 using System.Net.Http;
 
 namespace Sahibinden.AdminPanel.Controllers
@@ -31,6 +32,21 @@ namespace Sahibinden.AdminPanel.Controllers
             }
 
             return NotFound("İlan silinemedi.");
+        }
+       
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            try
+            {
+                var adverts = await _advertService.List(new Sahibinden.Business.Model.Advert.AdvertListModel());
+                return Ok(adverts);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
         }
 
     }

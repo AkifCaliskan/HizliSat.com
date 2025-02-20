@@ -704,8 +704,8 @@ namespace Sahibinden.DataAccess.Migrations
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
-                    b.Property<short>("Type")
-                        .HasColumnType("smallint");
+                    b.Property<int>("UserType")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -723,7 +723,7 @@ namespace Sahibinden.DataAccess.Migrations
                             Phone = "5555555555",
                             RecordDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = true,
-                            Type = (short)1
+                            UserType = 2
                         });
                 });
 
