@@ -32,7 +32,7 @@ namespace Sahibinden.Business.DependecyResolvers.AutoFac
             builder.RegisterType<Context>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<MemoryCache>().As<IMemoryCache>();
             builder.RegisterType<AuthService>().As<IAuthService>();
-
+         
             builder.RegisterGeneric(typeof(GenericRepository<>)).As(typeof(IGenericRepository<>)).InstancePerLifetimeScope();
 
             // AutoMapper kaydı

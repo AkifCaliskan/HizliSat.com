@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 using Sahibinden.Business.Abstract;
 using Sahibinden.Business.DTO_s;
@@ -27,6 +28,7 @@ namespace Sahibinden.AdminPanel.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(UserLoginDetailModel model)
         {
             if (!ModelState.IsValid)
@@ -39,6 +41,7 @@ namespace Sahibinden.AdminPanel.Controllers
             var jsonContent = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
 
             var response = await client.PostAsync("https://localhost:44384/api/Auth/Login", jsonContent);
+
 
             if (!response.IsSuccessStatusCode)
             {
@@ -59,12 +62,12 @@ namespace Sahibinden.AdminPanel.Controllers
             if (loginResponse == null)
             {
                 ViewBag.Error = "Yanıt deserialization hatası!";
-                return View("Index", model);
+                return RedirectToAction("Index", model);
             }
 
             _cacheService.SetToCache("AuthToken", loginResponse.Token, TimeSpan.FromHours(1));
 
-            return RedirectToAction("Dashboard", "Home");
+            return RedirectToAction("Index", "Home");
         }
     }
 }

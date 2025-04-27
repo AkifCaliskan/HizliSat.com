@@ -19,7 +19,7 @@ namespace Sahibinden.AdminPanel.Middleware
         {
             var endpoint = context.GetEndpoint();
 
-            // 📌 1️⃣ Eğer istek /Auth sayfasına gidiyorsa middleware işlemi atla
+
             if (context.Request.Path.StartsWithSegments("/Auth"))
             {
                 await _next(context);
@@ -37,19 +37,19 @@ namespace Sahibinden.AdminPanel.Middleware
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
             {
                 context.Response.Redirect("/Auth/Index");
-                return; // 🔥 Sonsuz döngüyü engellemek için burada işlemi durduruyoruz!
+                return;
             }
 
             if (!_cacheService.TryGetUser(userId, out var cachedUser))
             {
                 context.Response.Redirect("/Auth/Index");
-                return; // 🔥 Sonsuz döngüyü engellemek için burada işlemi durduruyoruz!
+                return;
             }
 
             if (cachedUser.User.UserType != UserType.Admin && cachedUser.User.UserType != UserType.SuperAdmin)
             {
                 context.Response.Redirect("/Pages/NotAuthorized");
-                return; // 🔥 Sonsuz döngüyü engellemek için burada işlemi durduruyoruz!
+                return;
             }
 
             await _next(context);

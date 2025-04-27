@@ -38,7 +38,7 @@ namespace Sahibinden.Controllers
                 var user = await _authService.Authenticate(userLoginDetailModel);
                 if (user != null)
                 {
-                    return Ok("Giriş İşlemi Başarılı");
+                    return Ok(new { message = "Giriş İşlemi Başarılı" });
 
                 }
 

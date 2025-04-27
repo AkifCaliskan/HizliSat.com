@@ -12,11 +12,13 @@ namespace Sahibinden.Business.Concrete.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICacheService _cacheService;
+        private readonly ITokenService _tokenService;
 
-        public AuthService(IUnitOfWork unitOfWork, ICacheService cacheService)
+        public AuthService(IUnitOfWork unitOfWork, ICacheService cacheService, ITokenService tokenService)
         {
             _unitOfWork = unitOfWork;
             _cacheService = cacheService;
+            _tokenService = tokenService;
         }
 
         public async Task<UserDto?> Authenticate(UserLoginDetailModel userLoginDetailModel)
@@ -35,8 +37,10 @@ namespace Sahibinden.Business.Concrete.Services
 
                 if (isPasswordValid)
                 {
+                    var token = _tokenService.GenerateJwtToken(user);
                     var userDto = new UserDto
                     {
+
                         Id = user.Id,
                         Email = user.Email,
                     };
@@ -48,7 +52,7 @@ namespace Sahibinden.Business.Concrete.Services
         }
         public async Task<bool> Register(UserRegisterModel userRegisterModel)
         {
-            var userRepo =  _unitOfWork.GetRepository<User>();
+            var userRepo = _unitOfWork.GetRepository<User>();
 
             var existingUser = (await userRepo.GetAllAsync()).FirstOrDefault(u => u.Email == userRegisterModel.Email);
             if (existingUser != null)
