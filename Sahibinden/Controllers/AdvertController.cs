@@ -116,7 +116,7 @@ namespace Sahibinden.Controllers
                 result = $"{request.Scheme}://{request.Host}/{splitUrl[1]}";
             }
             return result;
-        }
+        }.....
 
         private void DecodeToken(string token)
         {
