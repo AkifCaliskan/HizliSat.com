@@ -16,6 +16,6 @@ namespace Sahibinden.Business.Abstract
 
         Task<IEnumerable<User>> List();
         Task<User> GetById(int id);
-        Task Delete(int id);
+        Task Delete(int id);....
     }
 }
