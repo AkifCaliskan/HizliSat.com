@@ -23,7 +23,6 @@ namespace Sahibinden.Business.AutoMapper
             CreateMap<ImageAddModel, Image>();
             CreateMap<AdvertDetail, AdvertDetailAdd>();
             CreateMap<UserDto, User>();
-
-        }
+                    }
     }
 }

@@ -22,7 +22,15 @@ namespace Sahibinden.Business.Concrete.Services
             _cacheService = cacheService;
         }
 
-       
+        public async Task<User> Add(UserRegisterModel model)
+        {
+            var user = _mapper.Map<User>(model);
+            user.Password = PasswordHelper.HashPassword(model.Password);
+            await _unitOfWork.GetRepository<User>().AddAsync(user);
+            await _unitOfWork.SaveChangesAsync();
+            return user;    
+        }
+
         public async Task Delete(int id)
         {
             var repository = _unitOfWork.GetRepository<User>();
@@ -65,5 +73,6 @@ namespace Sahibinden.Business.Concrete.Services
             var repository = _unitOfWork.GetRepository<User>();
             return await repository.GetAllAsync();
         }
+       
     }
 }

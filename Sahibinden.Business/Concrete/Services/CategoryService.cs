@@ -1,16 +1,8 @@
 ﻿using AutoMapper;
 using Sahibinden.Business.Abstract;
-using Sahibinden.Core.EntityFramework;
 using Sahibinden.DataAccess.UnitOfWork;
 using Sahibinden.Entities.Concrete;
 using Sahibinden.Model.Category;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sahibinden.Business.Concrete.Services
 {

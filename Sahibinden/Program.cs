@@ -1,17 +1,13 @@
+using System.Text;
 using Autofac;
-using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Sahibinden.Business.DependecyResolvers.AutoFac;
-using Sahibinden.Core.EntityFramework;
 using Sahibinden.DataAccess.Concrete;
 using Sahibinden.DataAccess.UnitOfWork;
-using System.Security.Claims;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 

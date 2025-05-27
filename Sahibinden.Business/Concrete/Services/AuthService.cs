@@ -12,13 +12,13 @@ namespace Sahibinden.Business.Concrete.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICacheService _cacheService;
-        private readonly ITokenService _tokenService;
+        
 
-        public AuthService(IUnitOfWork unitOfWork, ICacheService cacheService, ITokenService tokenService)
+        public AuthService(IUnitOfWork unitOfWork, ICacheService cacheService)
         {
             _unitOfWork = unitOfWork;
             _cacheService = cacheService;
-            _tokenService = tokenService;
+            
         }
 
         public async Task<UserDto?> Authenticate(UserLoginDetailModel userLoginDetailModel)
@@ -32,19 +32,26 @@ namespace Sahibinden.Business.Concrete.Services
                     return null;
                 }
                 var storedPassword = user.Password;
-
+                var hashedPassword = PasswordHelper.HashPassword("1234");
                 var isPasswordValid = PasswordHelper.VerifyPassword(userLoginDetailModel, storedPassword);
+                
 
                 if (isPasswordValid)
                 {
-                    var token = _tokenService.GenerateJwtToken(user);
+                    
                     var userDto = new UserDto
                     {
 
                         Id = user.Id,
                         Email = user.Email,
+                        UserType = user.UserType,
+                        Password = user.Password,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName
                     };
-
+                    var cacheKey = $"User_{userDto.Id}";
+                    var permissions = new List<int>() { 1,2,3};
+                    _cacheService.SetToCache(cacheKey, (userDto,permissions),TimeSpan.FromMinutes(60));
                     return userDto;
                 }
             }

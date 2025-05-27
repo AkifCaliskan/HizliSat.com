@@ -1,7 +1,27 @@
-﻿
-@model SahibindenUi.Pages.Shared._LoginSignupFormModel
+﻿@using Sahibinden.Business.DTO_s
 @{
-    Layout = "_LayoutSignIn";
+	Layout = "_Layout";
 }
 
-<h3></h3>
+@(Html.EJS().Grid<UserDto>("Grid").DataSource(ds => ds.Url(Url.Action("GetUsers")).InsertUrl(Url.Action("AddUser")).Adaptor("UrlAdaptor")).Columns(col =>
+		{
+			col.Field(p => p.Id).HeaderText("Id").Width("100").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Right).IsPrimaryKey(true)
+			.IsIdentity(true)
+			.AllowEditing(false).Add();
+			col.Field(p => p.Status).HeaderText("Status").Width("100").EditType("booleanedit")
+			.DisplayAsCheckBox(true).Add();
+			col.Field("FirstName").HeaderText("FirstName").Width("100").Add();
+			col.Field("LastName").HeaderText("LastName").Width("100").Add();
+			col.Field("Email").HeaderText("Email").Width("100").Add();
+			col.Field("Phone").HeaderText("Phone").Width("100").Add();
+			col.Field("Address").HeaderText("Adress").Width("100").Add();
+			col.Field("UserType").HeaderText("UserType").Width("100").Add();
+
+		}).EditSettings(edit => { edit.AllowAdding(true).AllowEditing(true).AllowDeleting(true); }).Toolbar(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel" }).Render())
+
+<style>
+	.e-grid .e-toolbar .e-tbar-btn-text,
+	.e-grid .e-toolbar .e-toolbar-items .e-toolbar-item .e-tbar-btn-text {
+		display: none;
+	}
+</style>

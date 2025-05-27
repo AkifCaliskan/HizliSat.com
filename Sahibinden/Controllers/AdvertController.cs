@@ -1,20 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Mvc;
 using Sahibinden.Business.Abstract;
-using Sahibinden.Business.Concrete.Services;
-using Sahibinden.Business.Model.Advert;
-using Sahibinden.Core.EntityFramework;
-using Sahibinden.Core.EntityFramework;
-using Sahibinden.Entities.Concrete;
-using Sahibinden.Model.Advert;
-using Sahibinden.Model.AdvertDetail;
-using System.Diagnostics.Eventing.Reader;
-using System.Net.Http;
-using System.Security.Claims;
 
 namespace Sahibinden.Controllers
 {
@@ -116,7 +101,7 @@ namespace Sahibinden.Controllers
                 result = $"{request.Scheme}://{request.Host}/{splitUrl[1]}";
             }
             return result;
-        }.....
+        }
 
         private void DecodeToken(string token)
         {

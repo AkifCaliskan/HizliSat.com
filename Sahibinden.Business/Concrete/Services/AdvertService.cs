@@ -1,20 +1,11 @@
-﻿using AutoMapper;
+﻿using System.Globalization;
+using System.Text.Json.Nodes;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Sahibinden.Business.Abstract;
 using Sahibinden.Business.Model.Advert;
-using Sahibinden.Core.EntityFramework;
-using Sahibinden.DataAccess;
-using Sahibinden.DataAccess.Repositories;
 using Sahibinden.DataAccess.UnitOfWork;
 using Sahibinden.Entities.Concrete;
-using Sahibinden.Model.AdvertDetail;
-using Sahibinden.Model.Category;
-using Sahibinden.Model.Image;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sahibinden.Business.Concrete.Services
 {
@@ -32,7 +23,7 @@ namespace Sahibinden.Business.Concrete.Services
         public async Task<Advert> Add(AdvertAddModel advertAddModel)
         {
             var advert = _mapper.Map<Advert>(advertAddModel);
-            
+
             await _unitOfWork.GetRepository<Advert>().AddAsync(advert);
             await _unitOfWork.SaveChangesAsync();
             return advert;
@@ -60,11 +51,23 @@ namespace Sahibinden.Business.Concrete.Services
             }
             return entity;
         }
-
-        public async Task<IEnumerable<Advert>> List(AdvertListModel advertListModel)
+        public async Task<List<AdvertListModel>> List()
         {
-            var adverts = await _unitOfWork.GetRepository<Advert>().GetAllAsync();
-            return adverts;
+            var query = await _unitOfWork.GetRepository<Advert>().Query().Include(p => p.Category).Include(p => p.User).Include(p => p.Images).ToListAsync();
+
+            var result = query.Select(a => new AdvertListModel
+            {
+                CategoryName = a.Category.Name,
+                Description = a.Description,
+                FirstImage = a.Images == null ? "" : a.Images.Images,
+                Name = a.Name,
+                Status = a.Status,
+                Id = a.Id,
+                RecordDate = a.RecordDate.ToString("dd MMM yyyy (hh:mm)", new CultureInfo("tr_TR")),
+                FirstName =  $"{a.User.FirstName} {a.User.LastName}",
+            }).ToList();
+
+            return result;
         }
 
         public async Task<Advert> Update(AdvertEditModel advertEditModel)

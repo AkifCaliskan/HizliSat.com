@@ -7,7 +7,7 @@ namespace Sahibinden.AdminPanel.Middleware
     public class AdminAuthMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ICacheService _cacheService;
+        private ICacheService _cacheService;
 
         public AdminAuthMiddleware(RequestDelegate next, ICacheService cacheService)
         {
@@ -36,13 +36,13 @@ namespace Sahibinden.AdminPanel.Middleware
 
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
             {
-                context.Response.Redirect("/Auth/Index");
+                context.Response.Redirect("/Auth/Login");
                 return;
             }
 
             if (!_cacheService.TryGetUser(userId, out var cachedUser))
             {
-                context.Response.Redirect("/Auth/Index");
+                context.Response.Redirect("/Auth/Login");
                 return;
             }
 

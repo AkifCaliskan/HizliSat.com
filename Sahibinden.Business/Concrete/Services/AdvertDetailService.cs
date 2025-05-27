@@ -1,16 +1,9 @@
 ﻿using AutoMapper;
 using Sahibinden.Business.Abstract;
 using Sahibinden.Business.Model.AdvertDetail;
-using Sahibinden.Core.EntityFramework;
 using Sahibinden.DataAccess.UnitOfWork;
 using Sahibinden.Entities.Concrete;
 using Sahibinden.Model.AdvertDetail;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sahibinden.Business.Concrete.Services
 {

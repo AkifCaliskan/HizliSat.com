@@ -15,6 +15,6 @@ namespace Sahibinden.Business.Abstract
         Task<Advert> Update(AdvertEditModel advertEditModel);
         Task<Advert> GetById(int id);
         Task Delete(int id);
-        Task<IEnumerable<Advert>> List(AdvertListModel advertListModel);
+        Task<List<AdvertListModel>> List();
     }
 }

@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Sahibinden.Business.Abstract;
+using Sahibinden.Business.Model.Advert;
 using Sahibinden.Entities.Concrete;
-using System.Net.Http;
+using Syncfusion.EJ2.Base;
 
 namespace Sahibinden.AdminPanel.Controllers
 {
@@ -9,6 +11,7 @@ namespace Sahibinden.AdminPanel.Controllers
     {
         private readonly IAdvertService _advertService;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ICategoryService _categoryService;
 
         public AdvertController(IAdvertService advertService, IHttpClientFactory httpClientFactory)
         {
@@ -16,8 +19,9 @@ namespace Sahibinden.AdminPanel.Controllers
             _httpClientFactory = httpClientFactory;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+
             return View();
         }
         [HttpPost]
@@ -33,20 +37,20 @@ namespace Sahibinden.AdminPanel.Controllers
 
             return NotFound("İlan silinemedi.");
         }
-       
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpPost("GetList")]
+        public async Task<IActionResult> GetAdverts([FromBody] DataManagerRequest dm)
         {
-            try
-            {
-                var adverts = await _advertService.List(new Sahibinden.Business.Model.Advert.AdvertListModel());
-                return Ok(adverts);
-            }
-            catch (Exception ex)
-            {
+            var adverts = await _advertService.List();
+            return Json(new { result = adverts, count = adverts.Count() });
 
-                return BadRequest(ex.Message);
-            }
+        }
+
+
+        [HttpPost("AddAdvert")]
+        public async Task<IActionResult> AddAdvert([FromBody] AdvertAddModel advertAdd)
+        {
+            var newAdvert = await _advertService.Add(advertAdd);
+            return Ok(newAdvert);
         }
 
     }

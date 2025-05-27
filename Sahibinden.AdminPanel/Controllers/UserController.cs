@@ -1,23 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Sahibinden.AdminPanel.Models.User;
+using Sahibinden.Business.Abstract;
 using Sahibinden.Business.Model.User;
-using Sahibinden.Entities.Enums;
 using SahibindenUi.Pages.Shared;
-using System.Net.Http;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
+using Syncfusion.EJ2.Base;
 
 namespace Sahibinden.AdminPanel.Controllers
 {
     public class UserController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IUserService _userService;
 
-        public UserController(IHttpClientFactory httpClientFactory)
+        public UserController(IHttpClientFactory httpClientFactory, IUserService userService)
         {
             _httpClientFactory = httpClientFactory;
+            _userService = userService;
         }
 
         public IActionResult Index()
@@ -35,47 +33,33 @@ namespace Sahibinden.AdminPanel.Controllers
             return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Register(Sahibinden.AdminPanel.Models.User.UserRegisterModel registerModel)
+        
+
+        [HttpPost("GetUsers")]
+        public async Task<IActionResult> GetUsers([FromBody]DataManagerRequest model)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(registerModel);
-            }
-            registerModel.UserType = UserType.Admin;
-            var httpClient = _httpClientFactory.CreateClient();
 
-            var json = JsonConvert.SerializeObject(registerModel);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            var response = await httpClient.PostAsync("https://localhost:44384/api/User", content);
-
-            if (response.IsSuccessStatusCode)
+            var users = await _userService.List();
+            if (users == null)
             {
-                return RedirectToAction("Index");
+                return BadRequest("Kullanıcılar bulunamadı");
             }
-            else
-            {
-                ModelState.AddModelError(string.Empty, "Kayıt başarısız. Lütfen tekrar deneyin.");
-                return View(registerModel);
-            }
+            return Json(new { result= users  ,count = users.Count()} );
+            
         }
-
-        [HttpGet]
-        public async Task<IActionResult> GetUsers()
+        [HttpPost("AddUser")]
+        public async Task<IActionResult> AddUser([FromBody] Syncfusion.EJ2.Base.CRUDModel<UserRegisterModel> request)
         {
-            var httpClient = _httpClientFactory.CreateClient();
-            var response = await httpClient.GetAsync("https://localhost:44384/api/User");
-
-            if (response.IsSuccessStatusCode)
+            if (request?.Value == null)
             {
-                var jsonString = await response.Content.ReadAsStringAsync();
-                var users = JsonConvert.DeserializeObject<List<UserListModel>>(jsonString);
-                return View("/UserManagement/Index", users);
+                Console.WriteLine("Model NULL geldi!");
+                return BadRequest("Geçersiz Veri");
             }
+            Console.WriteLine("Gelen veri: " + JsonConvert.SerializeObject(request.Value));
+            var newUser = await _userService.Add(request.Value);
+            return Json(newUser);
 
-            ModelState.AddModelError(string.Empty, "Kullanıcılar alınamadı.");
-            return View("../UserManagement/Index", new List<UserListModel>());
+            
         }
     }
 }

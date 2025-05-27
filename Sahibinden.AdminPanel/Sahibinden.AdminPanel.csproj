@@ -7,16 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\Register\**" />
+    <Content Remove="Views\Register\**" />
+    <EmbeddedResource Remove="Views\Register\**" />
+    <None Remove="Views\Register\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Sahibinden.Business\Sahibinden.Business.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.12" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Views\Register\" />
+    <PackageReference Include="Syncfusion.EJ2.AspNet.Core" Version="29.2.4" />
   </ItemGroup>
 
 </Project>

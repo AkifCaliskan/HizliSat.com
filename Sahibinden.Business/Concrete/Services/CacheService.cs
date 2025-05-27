@@ -11,7 +11,10 @@ namespace Sahibinden.Business.Concrete.Services
 {
     public class CacheService : ICacheService
     {
-        private readonly IMemoryCache _memoryCache;
+        private static readonly MemoryCacheOptions _opts = new()
+        { 
+        };
+        private readonly IMemoryCache _memoryCache = new MemoryCache(_opts);
 
         public CacheService(IMemoryCache memoryCache)
         {
@@ -31,13 +34,15 @@ namespace Sahibinden.Business.Concrete.Services
         public void SetToCache<T>(string key, T value, TimeSpan expiration)
         {
             var cacheEntryOptions = new MemoryCacheEntryOptions()
+                
             .SetAbsoluteExpiration(expiration);
             _memoryCache.Set(key, value, cacheEntryOptions);
         }
 
         public bool TryGetUser(int userId, out (UserDto User, List<int> Permissions) cachedUser)
         {
-            return _memoryCache.TryGetValue($"User_{userId}", out cachedUser);
+            var key = $"User_{userId}";
+            return _memoryCache.TryGetValue(key, out cachedUser);
         }
     }
 }
