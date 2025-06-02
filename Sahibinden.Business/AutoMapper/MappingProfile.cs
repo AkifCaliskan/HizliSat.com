@@ -3,6 +3,7 @@ using Sahibinden.Business.Concrete.Services;
 using Sahibinden.Business.DTO_s;
 using Sahibinden.Business.Model.Advert;
 using Sahibinden.Business.Model.AdvertDetail;
+using Sahibinden.Business.Model.Image;
 using Sahibinden.Entities.Concrete;
 using Sahibinden.Model.Image;
 using System;

@@ -23,9 +23,10 @@ namespace Sahibinden.Business.Concrete.Services
         public async Task<Advert> Add(AdvertAddModel advertAddModel)
         {
             var advert = _mapper.Map<Advert>(advertAddModel);
-
+            await _unitOfWork.BeginTransactionAsync();
             await _unitOfWork.GetRepository<Advert>().AddAsync(advert);
             await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.CommitTransactionAsync();
             return advert;
         }
 
@@ -59,12 +60,12 @@ namespace Sahibinden.Business.Concrete.Services
             {
                 CategoryName = a.Category.Name,
                 Description = a.Description,
-                FirstImage = a.Images == null ? "" : a.Images.Images,
+                FirstImage = a.Images == null ? "" : a.Images.ToList().ToString(),
                 Name = a.Name,
                 Status = a.Status,
                 Id = a.Id,
                 RecordDate = a.RecordDate.ToString("dd MMM yyyy (hh:mm)", new CultureInfo("tr_TR")),
-                FirstName =  $"{a.User.FirstName} {a.User.LastName}",
+                FirstName = $"{a.User.FirstName} {a.User.LastName}",
             }).ToList();
 
             return result;

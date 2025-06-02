@@ -6,7 +6,7 @@ namespace Sahibinden.Business.Abstract
     public interface IUserService
     {
 
-        Task<IEnumerable<User>> List();
+        Task<List<User>> List();
         Task<User> GetById(int id);
         Task Delete(int id);
         Task<User> Add(UserRegisterModel model);

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Sahibinden.Business.Abstract;
 using Sahibinden.Business.Model.Advert;
 using Sahibinden.Entities.Concrete;
@@ -7,21 +6,24 @@ using Syncfusion.EJ2.Base;
 
 namespace Sahibinden.AdminPanel.Controllers
 {
+    [Route("Advert")]
     public class AdvertController : Controller
     {
         private readonly IAdvertService _advertService;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ICategoryService _categoryService;
+        private readonly ICategoryFeaturesService _categoryFeaturesService;
 
-        public AdvertController(IAdvertService advertService, IHttpClientFactory httpClientFactory)
+        public AdvertController(IAdvertService advertService, IHttpClientFactory httpClientFactory, ICategoryService categoryService, ICategoryFeaturesService categoryFeaturesService)
         {
             _advertService = advertService;
             _httpClientFactory = httpClientFactory;
+            _categoryService = categoryService;
+            _categoryFeaturesService = categoryFeaturesService;
         }
 
         public async Task<IActionResult> Index()
         {
-
             return View();
         }
         [HttpPost]
@@ -45,12 +47,40 @@ namespace Sahibinden.AdminPanel.Controllers
 
         }
 
+        [HttpGet("AddAdvert")]
+        public async Task<IActionResult> AddAdvert()
+        {
+            var categoryFeatures = await _categoryFeaturesService.List();
+            var categories = await _categoryService.List();
+            var advert = new AdvertAddModel
+            {
+                CategoryId = categories.First().Id,
+                Categories = categories,
+                categoryFeaturesId = categoryFeatures.First().Id,
+                categoryFeaturesListModels = categoryFeatures
+            };
+            return View(advert);
+        }
+
+        [HttpPost("GetCategories")]
+        public async Task<IActionResult> GetCategories([FromBody] DataManagerRequest dm)
+        {
+            var categories = await _categoryService.List();
+            return Json(categories);
+        }
 
         [HttpPost("AddAdvert")]
-        public async Task<IActionResult> AddAdvert([FromBody] AdvertAddModel advertAdd)
+        public async Task<IActionResult> AddAdvert(AdvertAddModel advertAdd)
         {
             var newAdvert = await _advertService.Add(advertAdd);
             return Ok(newAdvert);
+        }
+        [HttpPost("GetCategoryFeaturesById/{categoryId}")]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> GetCategoryFeaturesById(  int categoryId)
+        {
+            var features = await _categoryFeaturesService.GetByCategoryIdAsync(categoryId);
+            return Json(features);
         }
 
     }

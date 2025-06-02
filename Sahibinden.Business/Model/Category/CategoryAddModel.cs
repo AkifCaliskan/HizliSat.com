@@ -1,4 +1,4 @@
-﻿namespace Sahibinden.Model.Category
+﻿namespace Sahibinden.Business.Model.Category
 {
     public class CategoryAddModel
     {

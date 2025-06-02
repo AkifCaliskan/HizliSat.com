@@ -1,8 +1,10 @@
-﻿namespace Sahibinden.Model.Image
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Sahibinden.Business.Model.Image
 {
     public class ImageAddModel
     {
-        public string Images { get; set; }
+        public IFormFile Images { get; set; }
         public int AdvertId { get; set; }
     }
 }

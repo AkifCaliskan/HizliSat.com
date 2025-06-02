@@ -15,7 +15,7 @@
 		var grid = document.getElementById("RowTemplate").ej2_instances[0];
 		if(args.item.id === 'RowTemplate_add'){
 			args.cancel = true;
-			window.location.href="/Advert/Create";
+			window.location.href='@(Url.Action("AddAdvert", "Advert"))';
 		}
 	}
 </script>

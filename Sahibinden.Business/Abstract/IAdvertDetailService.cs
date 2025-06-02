@@ -13,7 +13,7 @@ namespace Sahibinden.Business.Abstract
     public interface IAdvertDetailService
     {
         Task<AdvertDetail> Add(AdvertDetailAdd advertDetailAdd);
-        Task<IEnumerable<AdvertDetail>> List(AdvertDetailListModel advertDetailListModel);
+        Task<List<AdvertDetail>> List(AdvertDetailListModel advertDetailListModel);
         Task<AdvertDetail> Update(AdvertDetailEditModel advertDetailEditModel);
         Task<AdvertDetail> GetById (int id);
         Task Delete(int id);

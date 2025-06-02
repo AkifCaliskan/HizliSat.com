@@ -14,7 +14,7 @@ namespace Sahibinden.Entities.Concrete
         public int AdvertId { get; set; }
         public string Value { get; set; }
         public Advert Advert { get; set; }
-        public int CategoryFeautureId { get; set; }
-        public CategoryFeature Feauture { get; set; }
+        public int CategoryFeatureId { get; set; }
+        public CategoryFeature Feature { get; set; }
     }
 }

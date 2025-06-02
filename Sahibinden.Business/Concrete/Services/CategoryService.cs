@@ -1,8 +1,11 @@
-﻿using AutoMapper;
+﻿using System.Text.Json.Nodes;
+using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Sahibinden.Business.Abstract;
+using Sahibinden.Business.Model.Category;
 using Sahibinden.DataAccess.UnitOfWork;
 using Sahibinden.Entities.Concrete;
-using Sahibinden.Model.Category;
 
 namespace Sahibinden.Business.Concrete.Services
 {
@@ -48,21 +51,44 @@ namespace Sahibinden.Business.Concrete.Services
             return entity;
         }
 
-        public async Task<IEnumerable<Category>> List(CategoryListModel categoryListModel)
+        public async Task<List<CategoryListModel>> GetSubCategories(int parentId)
         {
-            var categories = await _unitOfWork.GetRepository<Category>().GetAllAsync();
-            return categories;
+            var query = await _unitOfWork.GetRepository<Category>().Query().Where(x => x.ParentId == parentId).ToListAsync();
+            var categoryList = query.Select(a => new CategoryListModel
+            {
+                Description = a.Description,
+                Name = a.Name,
+                ParentId = a.ParentId,
+                Id = a.Id,
+                
+            }).ToList();
+            return categoryList;
+        }
+
+        public async Task<List<CategoryListModel>> List()
+        {
+            var query = await _unitOfWork.GetRepository<Category>().Query().ToListAsync();
+            var categoryList = query.Select(a => new CategoryListModel
+            {
+                Description = a.Description,
+                Name = a.Name,
+                Id = a.Id,
+                ParentId = a.ParentId == 0 ? null : a.ParentId,
+                hasChild = query.Any(p => p.ParentId == a.Id),
+            }).ToList();
+
+            return categoryList;
         }
 
         public async Task<Category> Update(CategoryEditModel categoryEditModel)
         {
             var repository = _unitOfWork.GetRepository<Category>();
-            var updatedItem =await repository.GetByIdAsync(categoryEditModel.Id);
+            var updatedItem = await repository.GetByIdAsync(categoryEditModel.Id);
             if (updatedItem == null)
             {
                 ResultWrapperService<Category>.FailureResult("Kategori Bulunamadı");
             }
-           repository.UpdateAsync(updatedItem);
+            repository.UpdateAsync(updatedItem);
             return updatedItem;
         }
     }

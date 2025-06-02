@@ -1,0 +1,122 @@
+﻿@using Sahibinden.Business.Model.Advert
+@using Newtonsoft.Json
+@model AdvertAddModel
+@{
+	Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Yeni İlan</title>
+	<link href="https://cdn.syncfusion.com/ej2/29.1.33/fluent.css" rel="stylesheet" />
+	<script src="https://cdn.syncfusion.com/ej2/29.1.33/dist/ej2.min.js"></script>
+	<style>
+		.container {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.content {
+			border-radius: 8px;
+			padding: 10px;
+		}
+
+		.form-step {
+			display: none;
+		}
+
+			.form-step.active {
+				display: block;
+			}
+
+		.form-group {
+			margin-bottom: 10px;
+		}
+	</style>
+</head>
+<body>
+	@using (Html.BeginForm("AddAdvert", "Advert", FormMethod.Post, new { enctype = "multipart/form-data" }))
+	{
+		<div class="container">
+			<div class="content">
+				<div id="step1" class="form-step active">
+					<h3>İlan Oluştur</h3>
+					<div class="form-group">
+						@Html.EJS().TextBoxFor(m => m.Name).Width("200px").Placeholder("İlan Adı").Render()
+					</div>
+					<div class="form-group">
+						@Html.EJS().TextAreaFor(m => m.Description).Width("400px").Placeholder("İlan Açıklaması").Render()
+					</div>
+					<div class="form-group">
+						@Html.EJS().DropDownTree("treedata").Fields(field => field.Value("Id").ParentValue("ParentId").HasChildren("hasChild").Text("Name").DataSource(Model.Categories)).Select("onCategorySelected").Render()
+					</div>
+					<div class="form-group">
+						<button type="button" onclick="nextStep()">İleri</button>
+					</div>
+				</div>
+
+				<div id="step2" class="form-step">
+					<div class="form-group">
+						<h3>İlan Detaylarını Oluştur</h3>
+					</div>
+					<div class="form-group">
+						<button type="button" onclick="prevStep()">Geri</button>
+						<button type="submit">İlanı Oluştur</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+	<script>
+			function onCategorySelected(args) {
+			var selectedCategoryId = args.itemData?.Id || args.itemData?.id;
+
+			if (!selectedCategoryId) {
+				console.error("Seçilen kategori bulunamadı.");
+				return;
+			}
+				fetch('/Advert/GetCategoryFeaturesById/'+parseInt(selectedCategoryId), {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+			})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error("İstek başarısız.");
+				}
+				return response.json();
+			})
+			.then(data => {
+				console.log("Kategoriye ait özellikler:", data);
+
+				// Burada dropdown'u güncelleyebilirsin (opsiyonel)
+			})
+			.catch(error => {
+				console.error("Hata:", error);
+			});
+		}
+		let currentStep = 1;
+
+		function showStep(step) {
+			document.querySelectorAll('.form-step').forEach(el => el.classList.remove('active'));
+			document.getElementById('step' + step).classList.add('active');
+		}
+
+		function nextStep() {
+			currentStep++;
+			showStep(currentStep);
+		}
+
+		function prevStep() {
+			currentStep--;
+			showStep(currentStep);
+		}
+
+	</script>
+
+	@Html.EJS().ScriptManager()
+</body>
+</html>

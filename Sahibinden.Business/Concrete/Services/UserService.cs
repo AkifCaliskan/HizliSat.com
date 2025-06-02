@@ -68,7 +68,7 @@ namespace Sahibinden.Business.Concrete.Services
 
             return user;
         }
-        public async Task<IEnumerable<User>> List()
+        public async Task<List<User>> List()
         {
             var repository = _unitOfWork.GetRepository<User>();
             return await repository.GetAllAsync();

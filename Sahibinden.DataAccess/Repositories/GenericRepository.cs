@@ -36,7 +36,7 @@ namespace Sahibinden.DataAccess.Repositories
             return await _dbSet.Where(predicate).ToListAsync();
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public async Task<List<T>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
         }

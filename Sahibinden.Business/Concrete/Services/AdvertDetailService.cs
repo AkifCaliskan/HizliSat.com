@@ -49,7 +49,7 @@ namespace Sahibinden.Business.Concrete.Services
             return entity;
         }
 
-        public async Task<IEnumerable<AdvertDetail>> List(AdvertDetailListModel advertDetailListModel)
+        public async Task<List<AdvertDetail>> List(AdvertDetailListModel advertDetailListModel)
         {
             var advertdetails = await _unitOfWork.GetRepository<AdvertDetail>().GetAllAsync();
             return advertdetails;

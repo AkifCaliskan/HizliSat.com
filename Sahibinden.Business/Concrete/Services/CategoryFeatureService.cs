@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Sahibinden.Business.Abstract;
+using Sahibinden.Business.Model.CategoryFeatures;
 using Sahibinden.DataAccess.UnitOfWork;
 using Sahibinden.Entities.Concrete;
 
@@ -37,6 +39,22 @@ namespace Sahibinden.Business.Concrete.Services
             await _unitOfWork.SaveChangesAsync();
         }
 
+        public async Task<List<CategoryFeaturesListModel>> GetByCategoryIdAsync(int categoryId)
+        {
+            Console.WriteLine("categoryId: " + categoryId); 
+
+            var features = await _unitOfWork.GetRepository<CategoryFeature>().Query().Where(cf => cf.CategoryId == categoryId).ToListAsync();
+
+            var mapped = features.Select(cf => new CategoryFeaturesListModel
+            {
+                Id = cf.Id,
+                Name = cf.Name,
+                categoryId = cf.CategoryId
+            }).ToList();
+
+            return mapped;
+        }
+
         public Task<CategoryFeature> GetById(int id)
         {
             var repository = _unitOfWork.GetRepository<CategoryFeature>();
@@ -44,10 +62,15 @@ namespace Sahibinden.Business.Concrete.Services
             return entity;
         }
 
-        public async Task<IEnumerable<CategoryFeature>> List(CategoryFeature categoryFeature)
+        public async Task<List<CategoryFeaturesListModel>> List()
         {
-            var repository = _unitOfWork.GetRepository<CategoryFeature>();
-            return await repository.GetAllAsync();
+            var repository = await _unitOfWork.GetRepository<CategoryFeature>().Query().Where(x => x.Id == x.CategoryId).ToListAsync();
+            var categoryFeature = repository.Select(x => new CategoryFeaturesListModel
+            {
+                Id = x.Id,
+                Name = x.Name,
+            }).ToList();
+            return categoryFeature;
         }
 
         public bool Update(CategoryFeature categoryFeature)

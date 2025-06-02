@@ -10,6 +10,7 @@ namespace Sahibinden.Entities.Concrete
     {
         public string Images { get; set; }
         public int AdvertId { get; set; }
+        public Advert Advert { get; set; }
         public bool Status { get; set; }
     }
 }

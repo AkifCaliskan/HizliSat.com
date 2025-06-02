@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Sahibinden.Entities.Concrete;
 
 namespace Sahibinden.Business.Model.AdvertDetail
 
@@ -6,7 +6,8 @@ namespace Sahibinden.Business.Model.AdvertDetail
     public class AdvertDetailAdd
     {
         public int AdvertId { get; set; }
-        public List<IFormFile> AdvertImages { get; set; }
-        public int CategoryId { get; set; }
+        public string Value { get; set; }
+        public int CategoryFeatureId { get; set; }
+        public List<CategoryFeature> CategoryFeatures { get; set; }
     }
 }

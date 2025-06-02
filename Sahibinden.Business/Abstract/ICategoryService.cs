@@ -1,21 +1,15 @@
-﻿using Sahibinden.Entities.Concrete;
-using Sahibinden.Model.Category;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Sahibinden.Business.Model.Category;
+using Sahibinden.Entities.Concrete;
 
 namespace Sahibinden.Business.Abstract
 {
     public interface ICategoryService
     {
-        Task<IEnumerable<Category>> List(CategoryListModel categoryListModel);
+        Task<List<CategoryListModel>> GetSubCategories(int parentId);
+        Task<List<CategoryListModel>> List();
         Task<Category> Add(CategoryAddModel categoryAddModel);
         Task<Category> Update(CategoryEditModel categoryEditModel);
         Task<Category> GetById(int id);
-
         Task Delete(int id);
     }
 }
