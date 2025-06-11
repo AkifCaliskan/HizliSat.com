@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
-using System.Text.Json.Nodes;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Sahibinden.Business.Abstract;
 using Sahibinden.Business.Model.Advert;
@@ -13,22 +14,32 @@ namespace Sahibinden.Business.Concrete.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public AdvertService(IUnitOfWork unitOfWork, IMapper mapper)
+        public AdvertService(IUnitOfWork unitOfWork, IMapper mapper, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<Advert> Add(AdvertAddModel advertAddModel)
+        public async Task<Advert> Add(AdvertAddModel advertAddModel, IFormFileCollection files)
         {
+            if (files == null || files.Count == 0)
+            {
+                throw new Exception("Lütfen en az bir fotoğraf yükleyiniz.");
+            }
+
             await _unitOfWork.BeginTransactionAsync();
             try
             {
                 var advert = _mapper.Map<Advert>(advertAddModel);
-                await _unitOfWork.GetRepository<Advert>().AddAsync(advert);
-                await _unitOfWork.SaveChangesAsync();
+                advert.Images = new List<Image>(); // Liste başlatılıyor
 
+                await _unitOfWork.GetRepository<Advert>().AddAsync(advert);
+                await _unitOfWork.SaveChangesAsync(); // İlan ID'sinin oluşması için kaydet
+
+                // İlan özelliklerini kaydet
                 foreach (var feature in advertAddModel.FeatureValues)
                 {
                     var detail = new AdvertDetail
@@ -39,17 +50,43 @@ namespace Sahibinden.Business.Concrete.Services
                     };
                     await _unitOfWork.GetRepository<AdvertDetail>().AddAsync(detail);
                 }
-                await _unitOfWork.SaveChangesAsync();
 
+                // Fotoğrafları kaydet
+                bool isFirstImage = true;
+                foreach (var file in files)
+                {
+                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "ilan-resimleri");
+                    if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
+
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    await using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+
+                    var image = new Image
+                    {
+                        AdvertId = advert.Id,
+                        ImageUrl = "/ilan-resimleri/" + uniqueFileName,
+                        IsCover = isFirstImage,
+                        Status = true
+                    };
+                    await _unitOfWork.GetRepository<Image>().AddAsync(image);
+
+                    isFirstImage = false;
+                }
+
+                await _unitOfWork.SaveChangesAsync();
                 await _unitOfWork.CommitTransactionAsync();
                 return advert;
             }
-            catch
+            catch (Exception)
             {
                 await _unitOfWork.RollbackTransactionAsync();
                 throw;
             }
-
         }
 
         public async Task Delete(int id)
@@ -76,19 +113,28 @@ namespace Sahibinden.Business.Concrete.Services
         }
         public async Task<List<AdvertListModel>> List()
         {
-            var query = await _unitOfWork.GetRepository<Advert>().Query().Include(p => p.Category).Include(p => p.User).Include(p => p.Images).ToListAsync();
+            var query = await _unitOfWork.GetRepository<Advert>().Query()
+                .Include(p => p.Category)
+                .Include(p => p.User)
+                .Include(p => p.Images)
+                .ToListAsync();
 
             var result = query.Select(a => new AdvertListModel
             {
-                CategoryName = a.Category.Name,
-                Description = a.Description,
-                FirstImage = a.Images == null ? "" : a.Images.ToList().ToString(),
+                Id = a.Id,
                 Name = a.Name,
                 Status = a.Status,
-                Id = a.Id,
-                RecordDate = a.RecordDate.ToString("dd MMM yyyy (hh:mm)", new CultureInfo("tr_TR")),
+                Description = a.Description,
+                CategoryName = a.Category.Name,
+                RecordDate = a.RecordDate.ToString("dd MMM yyyy", new CultureInfo("tr-TR")),
                 FirstName = $"{a.User.FirstName} {a.User.LastName}",
+
+                CoverImageUrl = a.Images.FirstOrDefault(p => p.IsCover)?.ImageUrl
+                              ?? a.Images.FirstOrDefault()?.ImageUrl
+                              ?? "/images/no-image.png"
             }).ToList();
+
+
 
             return result;
         }

@@ -70,12 +70,12 @@ namespace Sahibinden.AdminPanel.Controllers
         }
 
         [HttpPost("AddAdvert")]
-        public async Task<IActionResult> AddAdvert(AdvertAddModel advertAdd)
+        public async Task<IActionResult> AddAdvert(AdvertAddModel advertAdd, IFormFileCollection formFiles)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (!int.TryParse(userIdClaim.Value, out int userId)) return BadRequest("Geçersiz Kullanıcı");
             advertAdd.UserId = userId;
-            var newAdvert = await _advertService.Add(advertAdd);
+            var newAdvert = await _advertService.Add(advertAdd, formFiles);
             return RedirectToAction("Index", "Advert");
         }
         [HttpPost("GetCategoryFeaturesById/{categoryId}")]

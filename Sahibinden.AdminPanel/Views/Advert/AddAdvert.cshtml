@@ -29,6 +29,10 @@
 					<h3>İlan Detayları</h3>
 					<div id="dynamicFeatureInputs"></div>
 				</div>
+				<div id="image-upload-section" class="form-group">
+					<h3>İlan Fotoğrafları</h3>
+					@Html.EJS().Uploader("formFiles").Multiple(true).AutoUpload(false).AllowedExtensions(".jpg, .png, .jpeg").Render()
+				</div>
 
 				@* İlan oluşturma butonu her zaman en altta *@
 				<div id="submit-section" class="form-group">
