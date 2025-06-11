@@ -64,6 +64,24 @@ namespace Sahibinden.Business.Concrete.Services
             }).ToList();
             return categoryList;
         }
+        public async Task<int> GetRootCategoryIdAsync(int categoryId)
+        {
+            var currentCategory = await _unitOfWork.GetRepository<Category>().GetByIdAsync(categoryId);
+            if (currentCategory == null) return categoryId;
+            while (currentCategory.ParentId.HasValue)
+            {
+                var parrentCategory = await _unitOfWork.GetRepository<Category>().GetByIdAsync(currentCategory.ParentId.Value);
+                if (parrentCategory == null)
+                {
+                    break;
+                }
+                currentCategory = parrentCategory;
+             
+            }
+            return currentCategory.Id;
+            
+
+        }
 
         public async Task<List<CategoryListModel>> List()
         {

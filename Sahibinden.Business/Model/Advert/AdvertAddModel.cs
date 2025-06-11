@@ -16,8 +16,8 @@ namespace Sahibinden.Business.Model.Advert
         public string Description { get; set; }
         public int UserId { get; set; }
         public AdvertDetailAdd AdvertDetailAddModel { get; set; }
-        public Dictionary<int, string> FeatureValues { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public Dictionary<int, string> FeatureValues { get; set; } = new Dictionary<int, string>();
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
         public int CategoryId { get; set; }
         public int ParentId { get; set; }
         public string CategoryName { get; set; }

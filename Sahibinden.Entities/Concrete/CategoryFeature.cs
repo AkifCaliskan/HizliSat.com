@@ -8,6 +8,7 @@ namespace Sahibinden.Entities.Concrete
         public string Name { get; set; }
         public bool Status { get; set; }
         public InputType InputType { get; set; }
+        public ICollection<CategoryFeatureOption> Options { get; set; } 
         public int CategoryId { get; set; }
         public Category Category { get; set; }
 

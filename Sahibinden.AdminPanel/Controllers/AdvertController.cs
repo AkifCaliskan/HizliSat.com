@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Sahibinden.Business.Abstract;
 using Sahibinden.Business.Model.Advert;
-using Sahibinden.Entities.Concrete;
 using Syncfusion.EJ2.Base;
 
 namespace Sahibinden.AdminPanel.Controllers
@@ -72,12 +72,15 @@ namespace Sahibinden.AdminPanel.Controllers
         [HttpPost("AddAdvert")]
         public async Task<IActionResult> AddAdvert(AdvertAddModel advertAdd)
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdClaim.Value, out int userId)) return BadRequest("Geçersiz Kullanıcı");
+            advertAdd.UserId = userId;
             var newAdvert = await _advertService.Add(advertAdd);
-            return Ok(newAdvert);
+            return RedirectToAction("Index", "Advert");
         }
         [HttpPost("GetCategoryFeaturesById/{categoryId}")]
         [IgnoreAntiforgeryToken]
-        public async Task<IActionResult> GetCategoryFeaturesById(  int categoryId)
+        public async Task<IActionResult> GetCategoryFeaturesById(int categoryId)
         {
             var features = await _categoryFeaturesService.GetByCategoryIdAsync(categoryId);
             return Json(features);

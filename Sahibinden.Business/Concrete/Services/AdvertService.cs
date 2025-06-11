@@ -22,12 +22,34 @@ namespace Sahibinden.Business.Concrete.Services
 
         public async Task<Advert> Add(AdvertAddModel advertAddModel)
         {
-            var advert = _mapper.Map<Advert>(advertAddModel);
             await _unitOfWork.BeginTransactionAsync();
-            await _unitOfWork.GetRepository<Advert>().AddAsync(advert);
-            await _unitOfWork.SaveChangesAsync();
-            await _unitOfWork.CommitTransactionAsync();
-            return advert;
+            try
+            {
+                var advert = _mapper.Map<Advert>(advertAddModel);
+                await _unitOfWork.GetRepository<Advert>().AddAsync(advert);
+                await _unitOfWork.SaveChangesAsync();
+
+                foreach (var feature in advertAddModel.FeatureValues)
+                {
+                    var detail = new AdvertDetail
+                    {
+                        AdvertId = advert.Id,
+                        CategoryFeatureId = feature.Key,
+                        Value = feature.Value
+                    };
+                    await _unitOfWork.GetRepository<AdvertDetail>().AddAsync(detail);
+                }
+                await _unitOfWork.SaveChangesAsync();
+
+                await _unitOfWork.CommitTransactionAsync();
+                return advert;
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw;
+            }
+
         }
 
         public async Task Delete(int id)

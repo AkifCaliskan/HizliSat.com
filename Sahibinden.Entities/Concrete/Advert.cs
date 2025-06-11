@@ -17,6 +17,7 @@ namespace Sahibinden.Entities.Concrete
         public Category Category { get; set; }
         public List<Image> Images { get; set; }
         public User User { get; set; }
+        public int UserId { get; set; }
         public List<AdvertDetail> Details { get; set; }
     }
 }

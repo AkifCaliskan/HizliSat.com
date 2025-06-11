@@ -24,7 +24,7 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/systemjs/0.19.38/system.js"></script>
 	<script src="https://cdn.syncfusion.com/ej2/syncfusion-helper.js" type="text/javascript"></script>
-
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 	<script src="https://cdn.syncfusion.com/ej2/29.1.33/dist/ej2.min.js"></script>
 
@@ -155,5 +155,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 	@Html.EJS().ScriptManager()
+
+	@await RenderSectionAsync("PageScripts")
 </body>
 </html>

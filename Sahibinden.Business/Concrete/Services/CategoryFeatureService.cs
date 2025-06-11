@@ -11,11 +11,13 @@ namespace Sahibinden.Business.Concrete.Services
     {
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICategoryService _categoryService;
 
-        public CategoryFeatureService(IMapper mapper, IUnitOfWork unitOfWork)
+        public CategoryFeatureService(IMapper mapper, IUnitOfWork unitOfWork, ICategoryService categoryService)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _categoryService = categoryService;
         }
 
         public async Task<CategoryFeature> Add(CategoryFeature categoryFeature)
@@ -41,18 +43,29 @@ namespace Sahibinden.Business.Concrete.Services
 
         public async Task<List<CategoryFeaturesListModel>> GetByCategoryIdAsync(int categoryId)
         {
-            Console.WriteLine("categoryId: " + categoryId); 
+            var rootId = await _categoryService.GetRootCategoryIdAsync(categoryId);
 
-            var features = await _unitOfWork.GetRepository<CategoryFeature>().Query().Where(cf => cf.CategoryId == categoryId).ToListAsync();
+            var features = await _unitOfWork.GetRepository<CategoryFeature>()
+                .Query()
+                // YENİ EKLENEN KISIM: Her bir özellik için ilişkili Options'ları da veritabanından getir.
+                .Include(cf => cf.Options)
+                .Where(cf => cf.CategoryId == rootId)
+                .ToListAsync();
 
-            var mapped = features.Select(cf => new CategoryFeaturesListModel
+            // Select ifadesi artık çok daha basit!
+            return features.Select(cf => new CategoryFeaturesListModel
             {
                 Id = cf.Id,
                 Name = cf.Name,
-                categoryId = cf.CategoryId
-            }).ToList();
+                categoryId = cf.CategoryId,
+                InputType = cf.InputType,
 
-            return mapped;
+                // Options listesini veritabanından gelen veriye göre doldur.
+                // cf.Options'ın null olmadığını ve eleman içerdiğini kontrol etmek her zaman iyidir.
+                Options = (cf.Options != null && cf.Options.Any())
+                    ? cf.Options.OrderBy(o => o.DisplayOrder).Select(o => o.OptionText).ToList()
+                    : null
+            }).ToList();
         }
 
         public Task<CategoryFeature> GetById(int id)

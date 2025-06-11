@@ -2,121 +2,150 @@
 @using Newtonsoft.Json
 @model AdvertAddModel
 @{
-	Layout = null;
+	Layout = "_Layout";
 }
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8" />
-	<title>Yeni İlan</title>
-	<link href="https://cdn.syncfusion.com/ej2/29.1.33/fluent.css" rel="stylesheet" />
-	<script src="https://cdn.syncfusion.com/ej2/29.1.33/dist/ej2.min.js"></script>
-	<style>
-		.container {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-		}
-
-		.content {
-			border-radius: 8px;
-			padding: 10px;
-		}
-
-		.form-step {
-			display: none;
-		}
-
-			.form-step.active {
-				display: block;
-			}
-
-		.form-group {
-			margin-bottom: 10px;
-		}
-	</style>
-</head>
-<body>
-	@using (Html.BeginForm("AddAdvert", "Advert", FormMethod.Post, new { enctype = "multipart/form-data" }))
-	{
-		<div class="container">
-			<div class="content">
-				<div id="step1" class="form-step active">
-					<h3>İlan Oluştur</h3>
-					<div class="form-group">
-						@Html.EJS().TextBoxFor(m => m.Name).Width("200px").Placeholder("İlan Adı").Render()
-					</div>
-					<div class="form-group">
-						@Html.EJS().TextAreaFor(m => m.Description).Width("400px").Placeholder("İlan Açıklaması").Render()
-					</div>
-					<div class="form-group">
-						@Html.EJS().DropDownTree("treedata").Fields(field => field.Value("Id").ParentValue("ParentId").HasChildren("hasChild").Text("Name").DataSource(Model.Categories)).Select("onCategorySelected").Render()
-					</div>
-					<div class="form-group">
-						<button type="button" onclick="nextStep()">İleri</button>
-					</div>
+@using (Html.BeginForm("AddAdvert", "Advert", FormMethod.Post, new { enctype = "multipart/form-data", id = "AddAdvertForm" }))
+{
+	<div class="container">
+		<div class="content">
+			@* Kullanıcının kafa karışıklığını önlemek için her şeyi tek bir adımda gösterelim. *@
+			<div id="main-form" class="form-step active">
+				<h3>İlan Oluştur</h3>
+				<div class="form-group">
+					@Html.EJS().TextBoxFor(m => m.Name).Width("200px").Placeholder("İlan Adı").Render()
+				</div>
+				<div class="form-group">
+					@Html.EJS().TextAreaFor(m => m.Description).Width("400px").Placeholder("İlan Açıklaması").Render()
+				</div>
+				<div class="form-group">
+					<label>Kategori</label>
+					@Html.EJS().DropDownTree("categoryId").Fields(field => field.Value("Id").ParentValue("ParentId").HasChildren("hasChild").Text("Name").DataSource(Model.Categories)).Select("onCategorySelected").Render()
 				</div>
 
-				<div id="step2" class="form-step">
-					<div class="form-group">
-						<h3>İlan Detaylarını Oluştur</h3>
-					</div>
-					<div class="form-group">
-						<button type="button" onclick="prevStep()">Geri</button>
-						<button type="submit">İlanı Oluştur</button>
-					</div>
+				<hr />
+
+				@* Dinamik özellikler bu bölüme yüklenecek *@
+				<div id="dynamic-features-section" style="display:none;">
+					<h3>İlan Detayları</h3>
+					<div id="dynamicFeatureInputs"></div>
+				</div>
+
+				@* İlan oluşturma butonu her zaman en altta *@
+				<div id="submit-section" class="form-group">
+					<button type="submit">İlanı Oluştur</button>
 				</div>
 			</div>
 		</div>
-	}
-	<script>
-			function onCategorySelected(args) {
-			var selectedCategoryId = args.itemData?.Id || args.itemData?.id;
+	</div>
+}
 
-			if (!selectedCategoryId) {
-				console.error("Seçilen kategori bulunamadı.");
-				return;
+
+<script>
+	function onCategorySelected(args) {
+		var selectedCategoryId = args.itemData?.Id || args.itemData?.id;
+
+		const featuresSection = document.getElementById("dynamic-features-section");
+		const container = document.getElementById("dynamicFeatureInputs");
+
+		if (!selectedCategoryId) {
+			console.error("Seçilen kategori bulunamadı.");
+			featuresSection.style.display = "none";
+			container.innerHTML = "";
+			return;
+		}
+
+		fetch('/Advert/GetCategoryFeaturesById/' + parseInt(selectedCategoryId), {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+		})
+		.then(response => {
+			if (!response.ok) { throw new Error("İstek başarısız."); }
+			return response.json();
+		})
+		.then(data => {
+			console.log("Kategoriye ait özellikler:", data);
+			container.innerHTML = ""; // Önceki özellikleri temizle
+
+			if (data && data.length > 0) {
+				featuresSection.style.display = "block"; // Alanı görünür yap
+
+				data.forEach(feature => {
+					const wrapper = document.createElement("div");
+					wrapper.className = "form-group";
+
+					const mainLabel = document.createElement("label");
+					mainLabel.textContent = feature.name;
+					wrapper.appendChild(mainLabel);
+
+					const inputContainer = document.createElement("div");
+					wrapper.appendChild(inputContainer);
+
+					// YENİ VE AKILLI MANTIK:
+					// Eğer backend'den 'options' listesi geldiyse radyo butonları oluştur.
+					if (feature.options && feature.options.length > 0) {
+						feature.options.forEach(optionText => {
+							const radioInput = document.createElement('input');
+							radioInput.type = 'radio';
+							radioInput.name = `FeatureValues[${feature.id}]`; // Aynı isimle gruplandır
+							radioInput.value = optionText; // Gönderilecek değer
+
+							inputContainer.appendChild(radioInput);
+
+							// Syncfusion RadioButton ile daha şık bir görünüm
+							new ej.buttons.RadioButton({
+								label: optionText,
+								name: `FeatureValues[${feature.id}]`,
+								value: optionText
+							}).appendTo(radioInput);
+						});
+					}
+					// 'options' listesi yoksa, eski usul inputType'a göre devam et.
+					else {
+						switch (feature.inputType) {
+							case 2: // Int (NumericTextBox)
+								const numericInput = document.createElement("input");
+								numericInput.type = "text"; // Hata almamak için 'text' olmalı
+								numericInput.name = `FeatureValues[${feature.id}]`;
+								inputContainer.appendChild(numericInput);
+								new ej.inputs.NumericTextBox({
+									placeholder: feature.name,
+									format: 'n0', value: 0
+								}).appendTo(numericInput);
+								break;
+
+							case 1: // String (TextBox)
+								const textInput = document.createElement("input");
+								textInput.type = "text";
+								textInput.name = `FeatureValues[${feature.id}]`;
+								inputContainer.appendChild(textInput);
+								new ej.inputs.TextBox({ placeholder: feature.name }).appendTo(textInput);
+								break;
+
+							case 0: // Bool (CheckBox)
+								const checkInput = document.createElement("input");
+								checkInput.type = "checkbox";
+								checkInput.name = `FeatureValues[${feature.id}]`;
+								checkInput.value = "true";
+								inputContainer.appendChild(checkInput);
+								new ej.buttons.CheckBox({
+									label: "Evet" // Daha anlamlı bir etiket
+								}).appendTo(checkInput);
+								break;
+						}
+					}
+					container.appendChild(wrapper);
+				});
+
+			} else {
+				// Kategoriye ait özellik yoksa, alanı gizle
+				featuresSection.style.display = "none";
 			}
-				fetch('/Advert/GetCategoryFeaturesById/'+parseInt(selectedCategoryId), {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-			})
-			.then(response => {
-				if (!response.ok) {
-					throw new Error("İstek başarısız.");
-				}
-				return response.json();
-			})
-			.then(data => {
-				console.log("Kategoriye ait özellikler:", data);
+		})
+		.catch(error => {
+			console.error("Hata:", error);
+		});
+	}
 
-				// Burada dropdown'u güncelleyebilirsin (opsiyonel)
-			})
-			.catch(error => {
-				console.error("Hata:", error);
-			});
-		}
-		let currentStep = 1;
-
-		function showStep(step) {
-			document.querySelectorAll('.form-step').forEach(el => el.classList.remove('active'));
-			document.getElementById('step' + step).classList.add('active');
-		}
-
-		function nextStep() {
-			currentStep++;
-			showStep(currentStep);
-		}
-
-		function prevStep() {
-			currentStep--;
-			showStep(currentStep);
-		}
-
-	</script>
-
-	@Html.EJS().ScriptManager()
-</body>
-</html>
+</script>
+@section PageScripts {
+}
