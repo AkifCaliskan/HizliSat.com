@@ -3,9 +3,13 @@
 @{
 	Layout = "_Layout";
 }
-@Html.EJS().Grid("RowTemplate").DataSource(x => x.Url(Url.Action("GetAdverts")).Adaptor("UrlAdaptor")).Height("335").Width("auto").RowTemplate("#rowtemplate").Columns(col =>
+@Html.EJS().Grid("RowTemplate").DataSource(x => x.Url(Url.Action("GetAdverts")).Adaptor("UrlAdaptor")).Height("335").Width("auto").Columns(col =>
 							{
-								col.HeaderText("Images").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Center).Width("150").Field("Images").Add();
+								col.Field("coverImageUrl").HeaderText("İlan Görseli").Template("#rowtemplate").Add();
+								col.Field("Name").HeaderText("İlan Adı").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Center).Width("150").Add();
+								col.Field("Status").HeaderText("Durumu").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Center).Width("150").Add();
+								col.Field("Description").HeaderText("Açıklama").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Center).Width("150").Add();
+								col.Field("CategoryName").HeaderText("Kategori").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Center).Width("150").Add();
 								col.HeaderText("İlan Detay").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Width("300").Field("Id").IsPrimaryKey(true).Visible(false).Add();
 
 							}).EditSettings(edit => { edit.AllowAdding(true).AllowEditing(true).AllowDeleting(true); }).Toolbar(new List<string>() { "Add", "Edit", "Delete", "Update", "Cancel" }).ToolbarClick("toolbarClick").Render()
@@ -31,27 +35,7 @@
 					<col width="50%">
 				</colgroup>
 				<tbody>
-					<tr>
-						<td class="cardheader">İlan Adı</td>
-						<td>${name} </td>
-					</tr>
-					<tr>
-						<td class="cardheader">Durumu</td>
-						<td>${status}</td>
-					</tr>
-
-					<tr>
-						<td class="cardheader">Açıklama</td>
-						<td>${description} </td>
-					</tr>
-					<tr>
-						<td class="cardheader">Kategori</td>
-						<td>${categoryName}</td>
-					</tr>
-					<tr>
-						<td class="cardheader">Yükleyen</td>
-						<td>${firstName}</td>
-					</tr>
+					
 				</tbody>
 			</table>
 		</td>
